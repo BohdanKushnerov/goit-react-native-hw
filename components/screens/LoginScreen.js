@@ -5,7 +5,6 @@ import {
   View,
   ImageBackground,
   TextInput,
-  TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
   Keyboard,
@@ -19,28 +18,16 @@ const initialState = {
 };
 
 export default function LoginScreen() {
-  console.log(Platform.OS);
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  // console.log(Platform.OS);
   const [state, setState] = useState(initialState);
-
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible((prevState) => !prevState);
-  };
-
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
-  };
-
   useEffect(() => {
-    const showSubBtns = Keyboard.addListener("keyboardIsShow", () => {
+    const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
       setIsShowKeyboard(true);
     });
-    const hideSubBtns = Keyboard.addListener("keyboardIsHide", () => {
+    const hideSubBtns = Keyboard.addListener("keyboardDidHide", () => {
       setIsShowKeyboard(false);
     });
 
@@ -49,6 +36,34 @@ export default function LoginScreen() {
       hideSubBtns.remove();
     };
   }, []);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prevState) => !prevState);
+  };
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  const register = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+  };
+
+  const emailHandleChangeText = (value) =>
+    setState((prevState) => ({
+      ...prevState,
+      email: value,
+    }));
+
+  const passwordHandleChangeText = (value) =>
+    setState((prevState) => ({
+      ...prevState,
+      password: value,
+    }));
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
@@ -70,35 +85,25 @@ export default function LoginScreen() {
                 <Text style={styles.headerTitle}>Увійти</Text>
               </View>
 
-              <View style={{ marginTop: 20 }}>
+              <View style={{ marginTop: 32 }}>
                 <TextInput
                   placeholder="Адреса електронної пошти"
                   style={styles.input}
                   textAlign={"left"}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.email}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({
-                      ...prevState,
-                      email: value,
-                    }))
-                  }
+                  onChangeText={emailHandleChangeText}
                 />
               </View>
 
-              <View style={{ marginTop: 20, position: "relative" }}>
+              <View style={{ marginTop: 16, position: "relative" }}>
                 <TextInput
                   placeholder="Пароль"
                   style={styles.input}
                   secureTextEntry={!passwordVisible}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({
-                      ...prevState,
-                      password: value,
-                    }))
-                  }
+                  onChangeText={passwordHandleChangeText}
                 />
                 <Pressable
                   style={{ position: "absolute", top: 16, right: 16 }}
@@ -115,7 +120,7 @@ export default function LoginScreen() {
                     <Pressable
                       activeOpacity={0.8}
                       style={styles.btn}
-                      onPress={keyboardHide}
+                      onPress={register}
                     >
                       <Text style={styles.btnTitle}>Увійти</Text>
                     </Pressable>
@@ -147,7 +152,29 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "flex-end",
   },
+
+  form: {
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    paddingTop: 92,
+    paddingHorizontal: 16,
+  },
+  header: {
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 30,
+    lineHeight: 35,
+    textAlign: "center",
+    letterSpacing: 0.01,
+    color: "#212121",
+  },
   input: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
     height: 50,
     padding: 16,
     backgroundColor: "#F6F6F6",
@@ -155,31 +182,8 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 8,
   },
-  form: {
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingTop: 92,
-    // paddingBottom: 78,
-    paddingHorizontal: 16,
-  },
-  header: {
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "500",
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-    letterSpacing: 0.01,
-    color: "#212121",
-  },
   passVisibility: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "right",
@@ -193,18 +197,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6C00",
   },
   btnTitle: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
     color: "#FFFFFF",
   },
   alreadyHaveAccount: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",

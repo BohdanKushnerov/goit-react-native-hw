@@ -5,13 +5,15 @@ import {
   View,
   ImageBackground,
   TextInput,
-  TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
   Pressable,
+  Image,
 } from "react-native";
+
+import SvgForRegisterImg from "../SvgForRegisterImg";
 
 const initialState = {
   login: "",
@@ -24,17 +26,6 @@ export default function RegistrationScreen() {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [state, setState] = useState(initialState);
-
-  const togglePasswordVisibility = () => {
-    setPasswordVisible((prevState) => !prevState);
-  };
-
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
-  };
 
   useEffect(() => {
     const showSubBtns = Keyboard.addListener("keyboardIsShow", () => {
@@ -50,6 +41,37 @@ export default function RegistrationScreen() {
     };
   }, []);
 
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prevState) => !prevState);
+  };
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
+  const register = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+  };
+
+  const loginHandleChangeText = (value) =>
+    setState((prevState) => ({ ...prevState, login: value }));
+
+  const emailHandleChangeText = (value) =>
+    setState((prevState) => ({
+      ...prevState,
+      email: value,
+    }));
+
+  const passwordHandleChangeText = (value) =>
+    setState((prevState) => ({
+      ...prevState,
+      password: value,
+    }));
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
@@ -58,7 +80,7 @@ export default function RegistrationScreen() {
           source={require("../../assets/bcg-image.jpg")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : ""}
+            behavior={Platform.OS === "ios" ? "padding" : "heigth"}
           >
             <View
               style={{
@@ -66,55 +88,66 @@ export default function RegistrationScreen() {
                 paddingBottom: isShowKeyboard ? 32 : 78,
               }}
             >
+              <View style={styles.imageContainer}>
+                <Image
+                  style={styles.registerImage}
+                  // source={{ uri: image }}
+                />
+                <Pressable
+                  style={{
+                    ...styles.imageIcon,
+                    // borderColor: image ? "#BDBDBD" : "#FF6C00",
+                  }}
+                  // onPress={() => {
+                  //   if (!image) {
+                  // навигация на камеру
+                  //   } else {
+                  //     setImage(null);
+                  //   }
+                  // }}
+                >
+                  <SvgForRegisterImg
+                  // image={image}
+                  />
+                </Pressable>
+              </View>
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Реєстрація</Text>
               </View>
 
-              <View style={{ marginTop: 33 }}>
+              <View style={{ marginTop: 32 }}>
                 <TextInput
                   placeholder="Логін"
                   style={styles.input}
                   textAlign={"left"}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.login}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({ ...prevState, login: value }))
-                  }
+                  onChangeText={loginHandleChangeText}
                 />
               </View>
 
-              <View style={{ marginTop: 20 }}>
+              <View style={{ marginTop: 16 }}>
                 <TextInput
                   placeholder="Адреса електронної пошти"
                   style={styles.input}
                   textAlign={"left"}
-                  secureTextEntry={true}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.email}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({
-                      ...prevState,
-                      email: value,
-                    }))
-                  }
+                  onChangeText={emailHandleChangeText}
                 />
               </View>
 
-              <View style={{ marginTop: 20, position: "relative" }}>
+              <View style={{ position: "relative", marginTop: 16 }}>
                 <TextInput
                   placeholder="Пароль"
                   style={styles.input}
                   secureTextEntry={!passwordVisible}
                   onFocus={() => setIsShowKeyboard(true)}
                   value={state.password}
-                  onChangeText={(value) =>
-                    setState((prevState) => ({
-                      ...prevState,
-                      password: value,
-                    }))
-                  }
+                  onChangeText={passwordHandleChangeText}
                 />
                 <Pressable
+                  activeOpacity={0.8}
                   style={{ position: "absolute", top: 16, right: 16 }}
                   onPress={togglePasswordVisibility}
                 >
@@ -129,13 +162,13 @@ export default function RegistrationScreen() {
                     <Pressable
                       activeOpacity={0.8}
                       style={styles.btn}
-                      onPress={keyboardHide}
+                      onPress={register}
                     >
                       <Text style={styles.btnTitle}>Зареєстуватися</Text>
                     </Pressable>
                   </View>
                   <View style={{ marginTop: 16 }}>
-                    <Pressable>
+                    <Pressable activeOpacity={0.8}>
                       <Text style={styles.alreadyHaveAccount}>
                         Вже є акаунт? Увійти
                       </Text>
@@ -161,7 +194,55 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     justifyContent: "flex-end",
   },
+
+  form: {
+    position: "relative",
+    backgroundColor: "#FFFFFF",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    paddingTop: 92,
+    paddingHorizontal: 16,
+  },
+  imageContainer: {
+    position: "absolute",
+    flexDirection: "row",
+    top: -60,
+    right: "50%",
+    transform: [{ translateX: 47 }],
+  },
+  registerImage: {
+    borderRadius: 16,
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+  },
+  imageIcon: {
+    position: "absolute",
+    bottom: 12,
+    right: -12,
+    borderWidth: 1,
+    borderColor: "#FF6C00",
+    borderRadius: 50,
+    width: 25,
+    height: 25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  header: {
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontFamily: "Roboto-Medium",
+    fontSize: 30,
+    lineHeight: 35,
+    textAlign: "center",
+    letterSpacing: 0.01,
+    color: "#212121",
+  },
   input: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
     height: 50,
     padding: 16,
     backgroundColor: "#F6F6F6",
@@ -169,31 +250,8 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 8,
   },
-  form: {
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingTop: 92,
-    // paddingBottom: 78,
-    paddingHorizontal: 16,
-  },
-  header: {
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "500",
-    fontSize: 30,
-    lineHeight: 35,
-    textAlign: "center",
-    letterSpacing: 0.01,
-    color: "#212121",
-  },
   passVisibility: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "right",
@@ -207,18 +265,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF6C00",
   },
   btnTitle: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
     color: "#FFFFFF",
   },
   alreadyHaveAccount: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontWeight: "400",
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
