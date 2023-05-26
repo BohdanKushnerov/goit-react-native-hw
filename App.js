@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-// import { View } from "react-native";
 
-import RegistrationScreen from "./components/screens/RegistrationScreen";
-import LoginScreen from "./components/screens/LoginScreen";
+import RegistrationScreen from "./screens/auth/RegistrationScreen";
+import LoginScreen from "./screens/auth/LoginScreen";
 import { useFonts } from "expo-font";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Home from "./screens/mainScreen/Home";
 
 export default function App() {
   const [isFontsLoaded] = useFonts({
@@ -16,10 +19,23 @@ export default function App() {
     return false;
   }
 
+  const AuthStack = createStackNavigator();
+
   return (
-    <>
-      {/* <RegistrationScreen></RegistrationScreen> */}
-      <LoginScreen></LoginScreen>
-    </>
+    <NavigationContainer>
+      <AuthStack.Navigator>
+        <AuthStack.Screen
+          options={{ headerShown: false }}
+          name="Login"
+          component={LoginScreen}
+        />
+        <AuthStack.Screen
+          options={{ headerShown: false }}
+          name="Register"
+          component={RegistrationScreen}
+        />
+      </AuthStack.Navigator>
+    </NavigationContainer>
+    // <Home></Home>
   );
 }

@@ -11,9 +11,10 @@ import {
   TouchableWithoutFeedback,
   Pressable,
   Image,
+  Dimensions,
 } from "react-native";
 
-import SvgForRegisterImg from "../SvgForRegisterImg";
+import SvgForRegisterImg from "../../components/SvgForRegisterImg";
 
 const initialState = {
   login: "",
@@ -21,17 +22,17 @@ const initialState = {
   password: "",
 };
 
-export default function RegistrationScreen() {
+export default function RegistrationScreen({ navigation }) {
   console.log(Platform.OS);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    const showSubBtns = Keyboard.addListener("keyboardIsShow", () => {
+    const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
       setIsShowKeyboard(true);
     });
-    const hideSubBtns = Keyboard.addListener("keyboardIsHide", () => {
+    const hideSubBtns = Keyboard.addListener("keyboardDidHide", () => {
       setIsShowKeyboard(false);
     });
 
@@ -80,7 +81,7 @@ export default function RegistrationScreen() {
           source={require("../../assets/bcg-image.jpg")}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "heigth"}
+            behavior={Platform.OS === "ios" ? "padding" : ""}
           >
             <View
               style={{
@@ -89,10 +90,7 @@ export default function RegistrationScreen() {
               }}
             >
               <View style={styles.imageContainer}>
-                <Image
-                  style={styles.registerImage}
-                  // source={{ uri: image }}
-                />
+                <Image style={styles.registerImage} />
                 <Pressable
                   style={{
                     ...styles.imageIcon,
@@ -102,7 +100,7 @@ export default function RegistrationScreen() {
                   //   if (!image) {
                   // навигация на камеру
                   //   } else {
-                  //     setImage(null);
+                  //  то NULL
                   //   }
                   // }}
                 >
@@ -156,26 +154,32 @@ export default function RegistrationScreen() {
                   </Text>
                 </Pressable>
               </View>
-              {!isShowKeyboard && (
-                <View style={{ marginTop: 43 }}>
-                  <View>
-                    <Pressable
-                      activeOpacity={0.8}
-                      style={styles.btn}
-                      onPress={register}
-                    >
-                      <Text style={styles.btnTitle}>Зареєстуватися</Text>
-                    </Pressable>
-                  </View>
-                  <View style={{ marginTop: 16 }}>
-                    <Pressable activeOpacity={0.8}>
-                      <Text style={styles.alreadyHaveAccount}>
-                        Вже є акаунт? Увійти
-                      </Text>
-                    </Pressable>
-                  </View>
+              <View
+                style={{
+                  marginTop: 43,
+                  marginBottom: isShowKeyboard ? -126 : 0,
+                }}
+              >
+                <View>
+                  <Pressable
+                    activeOpacity={0.8}
+                    style={styles.btn}
+                    onPress={register}
+                  >
+                    <Text style={styles.btnTitle}>Зареєстуватися</Text>
+                  </Pressable>
                 </View>
-              )}
+                <View style={{ marginTop: 16 }}>
+                  <Pressable
+                    activeOpacity={0.8}
+                    onPress={() => navigation.navigate("Login")}
+                  >
+                    <Text style={styles.alreadyHaveAccount}>
+                      Вже є акаунт? Увійти
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -193,6 +197,8 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 
   form: {

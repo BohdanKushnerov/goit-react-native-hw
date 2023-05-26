@@ -10,6 +10,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Pressable,
+  Dimensions,
 } from "react-native";
 
 const initialState = {
@@ -17,7 +18,7 @@ const initialState = {
   password: "",
 };
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   // console.log(Platform.OS);
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
@@ -114,26 +115,33 @@ export default function LoginScreen() {
                   </Text>
                 </Pressable>
               </View>
-              {!isShowKeyboard && (
-                <View style={{ marginTop: 43 }}>
-                  <View>
-                    <Pressable
-                      activeOpacity={0.8}
-                      style={styles.btn}
-                      onPress={register}
-                    >
-                      <Text style={styles.btnTitle}>Увійти</Text>
-                    </Pressable>
-                  </View>
-                  <View style={{ marginTop: 16 }}>
-                    <Pressable>
-                      <Text style={styles.alreadyHaveAccount}>
-                        Немає акаунту? Зареєструватися
-                      </Text>
-                    </Pressable>
-                  </View>
+              <View
+                style={{
+                  marginTop: 43,
+                  marginBottom: isShowKeyboard ? -126 : 0,
+                }}
+              >
+                <View>
+                  <Pressable
+                    activeOpacity={0.8}
+                    style={styles.btn}
+                    onPress={register}
+                  >
+                    <Text style={styles.btnTitle}>Увійти</Text>
+                  </Pressable>
                 </View>
-              )}
+                <View style={{ marginTop: 16 }}>
+                  <Pressable>
+                    <Text
+                      activeOpacity={0.8}
+                      style={styles.alreadyHaveAccount}
+                      onPress={() => navigation.navigate("Register")}
+                    >
+                      Немає акаунту? Зареєструватися
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -151,8 +159,9 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
-
   form: {
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
