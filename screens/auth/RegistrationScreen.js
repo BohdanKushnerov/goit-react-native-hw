@@ -15,6 +15,7 @@ import {
 } from "react-native";
 
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
+import { useUser } from "../../App";
 
 const initialState = {
   login: "",
@@ -27,6 +28,10 @@ export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [state, setState] = useState(initialState);
+  console.log(state.login);
+
+  // контекст
+  // const { isLogIn, setIsLogIn } = useUser();
 
   useEffect(() => {
     const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
@@ -52,10 +57,16 @@ export default function RegistrationScreen({ navigation }) {
   };
 
   const register = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
+    if (state.login && state.email && state.password) {
+      setIsShowKeyboard(false);
+      Keyboard.dismiss();
+      console.log(state);
+      setState(initialState);
+      // типа логин
+      // setIsLogIn(true);
+    } else {
+      console.log("Не все поля заполнены");
+    }
   };
 
   const loginHandleChangeText = (value) =>

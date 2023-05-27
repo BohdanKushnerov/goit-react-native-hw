@@ -13,6 +13,8 @@ import {
   Dimensions,
 } from "react-native";
 
+import { useUser } from "../../App";
+
 const initialState = {
   email: "",
   password: "",
@@ -23,6 +25,9 @@ export default function LoginScreen({ navigation }) {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  // контекст
+  const { isLogIn, setIsLogIn } = useUser();
 
   useEffect(() => {
     const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
@@ -48,10 +53,16 @@ export default function LoginScreen({ navigation }) {
   };
 
   const register = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
+    if (state.email && state.password) {
+      setIsShowKeyboard(false);
+      Keyboard.dismiss();
+      console.log(state);
+      setState(initialState);
+      // типа логин
+      setIsLogIn(true);
+    } else {
+      console.log("Не все поля заполнены");
+    }
   };
 
   const emailHandleChangeText = (value) =>
