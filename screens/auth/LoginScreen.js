@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Pressable,
   Dimensions,
+  useWindowDimensions,
 } from "react-native";
 
 import { useUser } from "../../App";
@@ -28,6 +29,9 @@ export default function LoginScreen({ navigation }) {
 
   // контекст
   const { isLogIn, setIsLogIn } = useUser();
+
+  const windowDimensions = useWindowDimensions();
+  const { width: dimensionsWidth } = windowDimensions;
 
   useEffect(() => {
     const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
@@ -53,16 +57,16 @@ export default function LoginScreen({ navigation }) {
   };
 
   const register = () => {
-    if (state.email && state.password) {
-      setIsShowKeyboard(false);
-      Keyboard.dismiss();
-      console.log(state);
-      setState(initialState);
-      // типа логин
-      setIsLogIn(true);
-    } else {
-      console.log("Не все поля заполнены");
-    }
+    // if (state.email && state.password) {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+    // типа логин
+    setIsLogIn(true);
+    // } else {
+    //   console.log("Не все поля заполнены");
+    // }
   };
 
   const emailHandleChangeText = (value) =>
@@ -81,7 +85,10 @@ export default function LoginScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <ImageBackground
-          style={styles.image}
+          style={{
+            ...styles.image,
+            width: dimensionsWidth,
+          }}
           source={require("../../assets/bcg-image.jpg")}
         >
           <KeyboardAvoidingView
@@ -91,6 +98,7 @@ export default function LoginScreen({ navigation }) {
               style={{
                 ...styles.form,
                 paddingBottom: isShowKeyboard ? 32 : 78,
+                // width: dimensions,
               }}
             >
               <View style={styles.header}>
@@ -170,8 +178,8 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    // width: Dimensions.get("window").width,
+    // height: Dimensions.get("window").height,
   },
   form: {
     backgroundColor: "#FFFFFF",

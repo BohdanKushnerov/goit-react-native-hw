@@ -12,6 +12,7 @@ import {
   Pressable,
   Image,
   Dimensions,
+  useWindowDimensions,
 } from "react-native";
 
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
@@ -31,7 +32,10 @@ export default function RegistrationScreen({ navigation }) {
   console.log(state.login);
 
   // контекст
-  // const { isLogIn, setIsLogIn } = useUser();
+  const { isLogIn, setIsLogIn } = useUser();
+
+  const windowDimensions = useWindowDimensions();
+  const { width: dimensionsWidth } = windowDimensions;
 
   useEffect(() => {
     const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
@@ -57,16 +61,16 @@ export default function RegistrationScreen({ navigation }) {
   };
 
   const register = () => {
-    if (state.login && state.email && state.password) {
-      setIsShowKeyboard(false);
-      Keyboard.dismiss();
-      console.log(state);
-      setState(initialState);
-      // типа логин
-      // setIsLogIn(true);
-    } else {
-      console.log("Не все поля заполнены");
-    }
+    // if (state.login && state.email && state.password) {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+    // типа логин
+    setIsLogIn(true);
+    // } else {
+    //   console.log("Не все поля заполнены");
+    // }
   };
 
   const loginHandleChangeText = (value) =>
@@ -88,7 +92,10 @@ export default function RegistrationScreen({ navigation }) {
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
         <ImageBackground
-          style={styles.image}
+          style={{
+            ...styles.image,
+            width: dimensionsWidth,
+          }}
           source={require("../../assets/bcg-image.jpg")}
         >
           <KeyboardAvoidingView
@@ -203,6 +210,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
+    justifyContent: "center",
   },
   image: {
     flex: 1,

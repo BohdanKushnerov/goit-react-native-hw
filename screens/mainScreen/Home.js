@@ -14,29 +14,9 @@ import {
 
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { useUser } from "../../App";
+import LogOutBtn from "../../components/LogOutBtn";
 
 const MainTab = createBottomTabNavigator();
-
-const CustomHeader = ({ setIsLogIn }) => {
-  const handleLogout = () => {
-    // navigation.navigate("Register");
-    setIsLogIn(false);
-  };
-
-  return (
-    <View style={styles.iconContainer}>
-      <TouchableOpacity onPress={handleLogout}>
-        <MaterialIcons name="logout" size={24} color="#BDBDBD" />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  iconContainer: {
-    marginRight: 19,
-  },
-});
 
 export default function Home() {
   const { isLogIn, setIsLogIn } = useUser();
@@ -44,7 +24,6 @@ export default function Home() {
   return (
     <MainTab.Navigator
       initialRouteName="Posts"
-      // initialRouteName="CreatePosts"
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: { height: 83, paddingHorizontal: 70 },
@@ -65,9 +44,9 @@ export default function Home() {
             borderBottomWidth: 1,
             borderBottomColor: "#B3B3B3",
           },
-          headerLeftContainerStyle: { marginLeft: 20 },
-          headerRightContainerStyle: { marginRight: 20 },
-          headerRight: () => <CustomHeader setIsLogIn={setIsLogIn} />,
+          headerLeftContainerStyle: { marginLeft: 10 },
+          headerRightContainerStyle: { marginRight: 10 },
+          headerRight: () => <LogOutBtn setIsLogIn={setIsLogIn} />,
 
           tabBarIcon: ({ focused, size }) => (
             <View
@@ -97,7 +76,7 @@ export default function Home() {
         name="CreatePosts"
         component={CreatePostsScreen}
         options={({ navigation }) => ({
-          // tabBarStyle: { display: "none" },
+          tabBarStyle: { display: "none" },
           headerTitle: "Створити публікацію",
           headerTitleAlign: "center",
           headerStyle: {

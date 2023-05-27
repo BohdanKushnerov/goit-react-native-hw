@@ -6,15 +6,19 @@ import {
   Image,
   TextInput,
   Pressable,
+  TouchableOpacity,
 } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 
 export default function CreatePostsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image />
+        <TouchableOpacity style={styles.iconContainer}>
+          <Entypo name="camera" size={24} color="#BDBDBD" />
+        </TouchableOpacity>
       </View>
       <View style={styles.containerImgState}>
         <Text style={styles.imgState}>Завантажте фото</Text>
@@ -46,7 +50,7 @@ export default function CreatePostsScreen() {
             color="#BDBDBD"
           />
         </View>
-        <View>
+        <View style={styles.btnWrap}>
           <Pressable
             activeOpacity={0.8}
             style={styles.btn}
@@ -54,6 +58,14 @@ export default function CreatePostsScreen() {
           >
             <Text style={styles.btnTitle}>Зареєстуватися</Text>
           </Pressable>
+        </View>
+        <View style={styles.deleteBtnWrap}>
+          <TouchableOpacity
+            style={styles.deleteBtn}
+            // disabled={}
+          >
+            <Feather name="trash-2" size={24} color="#BDBDBD" />
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -69,12 +81,24 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   imageContainer: {
+    position: "relative",
     marginBottom: 8,
     width: "100%",
     height: 240,
     // backgroundColor: "#F6F6F6",
     backgroundColor: "black",
     borderRadius: 8,
+  },
+  iconContainer: {
+    position: "absolute",
+    top: "36%",
+    left: "42%",
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 50,
   },
   containerImgState: {
     marginBottom: 32,
@@ -113,6 +137,9 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#212121",
   },
+  btnWrap: {
+    marginBottom: 120,
+  },
   btn: {
     height: 51,
     borderRadius: 100,
@@ -127,5 +154,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     // color: "#BDBDBD",
     color: "#FFFFFF",
+  },
+  deleteBtnWrap: {
+    alignItems: "center",
+  },
+  deleteBtn: {
+    width: 70,
+    height: 40,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
