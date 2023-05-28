@@ -1,44 +1,49 @@
 import { Feather } from "@expo/vector-icons";
-import { Dimensions, Image, StyleSheet, Text } from "react-native";
+import { Image, Pressable, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 
-const Post = () => {
+const UserPost = ({ image, navigation, location, title, address }) => {
+  // console.log("image", image);
+  // console.log("UserPostlocation", location);
+
   return (
     <View style={{ marginBottom: 32 }}>
       <View style={styles.imageContainer}>
-        <Image />
+        <Image
+          style={{
+            width: "100%",
+            height: 240,
+            borderRadius: 8,
+          }}
+          source={image}
+        />
       </View>
-      <Text style={styles.imageTitle}>Ліс</Text>
+      <Text style={styles.imageTitle}>{title}</Text>
       <View style={styles.imageDetails}>
-        <View style={styles.likesAndCommentsWrap}>
-          <View style={styles.likesWrap}>
+        <View style={styles.likesWrap}>
+          <Pressable onPress={() => navigation.navigate("CommentsScreen")}>
             <Feather name="message-circle" size={24} color="#FF6C00" />
-            <Text style={styles.likes}>8</Text>
-          </View>
-          <View style={styles.commentWrap}>
-            <Feather name="thumbs-up" size={22} color="#FF6C00" />
-            <Text style={styles.comments}>153</Text>
-          </View>
+          </Pressable>
+          <Text style={styles.likes}>8</Text>
         </View>
         <View style={styles.countryWrap}>
-          <Feather name="map-pin" size={24} color="#BDBDBD" />
-          <Text style={styles.country}>Ukraine</Text>
+          <Pressable
+            onPress={() => navigation.navigate("MapScreen", { location })}
+          >
+            <Feather name="map-pin" size={24} color="#BDBDBD" />
+          </Pressable>
+          <Text style={styles.country}>{address}</Text>
         </View>
       </View>
     </View>
   );
 };
 
-export default Post;
+export default UserPost;
 
 const styles = StyleSheet.create({
   imageContainer: {
     marginBottom: 8,
-
-    borderRadius: 8,
-    backgroundColor: "black",
-    width: "100%",
-    height: 240,
   },
   imageTitle: {
     marginBottom: 8,
@@ -54,15 +59,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 24,
   },
-  likesAndCommentsWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: "auto",
-    gap: 24,
-  },
   likesWrap: {
     flexDirection: "row",
     alignItems: "center",
+    marginRight: "auto",
     gap: 8,
   },
   likes: {

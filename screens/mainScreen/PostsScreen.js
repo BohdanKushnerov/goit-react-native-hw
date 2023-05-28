@@ -1,52 +1,47 @@
 import React from "react";
-import { Image, Pressable } from "react-native";
-import { Text, View, StyleSheet } from "react-native";
 
-export default function PostsScreen() {
+import { createStackNavigator } from "@react-navigation/stack";
+import DefaultScreen from "../nestedScreens/DefaultScreen";
+import MapScreen from "../nestedScreens/MapScreen";
+import CommentsScreen from "../nestedScreens/CommentsScreen";
+import LogOutBtn from "../../components/LogOutBtn";
+import { useUser } from "../../App";
+
+const NestedScreen = createStackNavigator();
+
+const PostsScreen = () => {
+  const { isLogIn, setIsLogIn } = useUser();
+
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image style={styles.profileImage} />
-        <View>
-          <Text style={styles.name}>Natali Romanova</Text>
-          <Text style={styles.email}>email@example.com</Text>
-        </View>
-      </View>
-    </View>
+    // <NestedScreen.Navigator>
+    <NestedScreen.Navigator>
+      <NestedScreen.Screen
+        name="DefaultScreen"
+        component={DefaultScreen}
+        options={{
+          headerTitle: "Публікації",
+          headerTitleAlign: "center",
+          headerStyle: {
+            height: 88,
+            borderBottomWidth: 1,
+            borderBottomColor: "#B3B3B3",
+          },
+          headerLeftContainerStyle: { marginLeft: 10 },
+          headerRightContainerStyle: { marginRight: 10 },
+          headerRight: () => <LogOutBtn setIsLogIn={setIsLogIn} />,
+        }}
+      />
+      <NestedScreen.Screen name="MapScreen" component={MapScreen} />
+      <NestedScreen.Screen
+        name="CommentsScreen"
+        component={CommentsScreen}
+        options={{
+          headerTitle: "Коментарі",
+          headerTitleAlign: "center",
+        }}
+      />
+    </NestedScreen.Navigator>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-    backgroundColor: "white",
-    paddingTop: 32,
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  imageContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  profileImage: {
-    borderRadius: 16,
-    width: 60,
-    height: 60,
-    // backgroundColor: "#F6F6F6",
-    backgroundColor: "black",
-  },
-  name: {
-    fontFamily: "Roboto-Bold",
-    fontSize: 13,
-    lineHeight: 15,
-  },
-  email: {
-    fontFamily: "Roboto-Regular",
-    fontSize: 11,
-    lineHeight: 13,
-    color: "rgba(33, 33, 33, 0.8)",
-  },
-});
+export default PostsScreen;

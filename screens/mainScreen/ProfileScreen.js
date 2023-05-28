@@ -14,7 +14,7 @@ import { useUser } from "../../App";
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
 
 import { Feather } from "@expo/vector-icons";
-import Post from "../../components/Post";
+import ProfilePost from "../../components/ProfilePost";
 
 export default function ProfileScreen() {
   const { isLogIn, setIsLogIn } = useUser();
@@ -52,8 +52,8 @@ export default function ProfileScreen() {
           <Text style={styles.name}>Natali Romanova</Text>
           {/* ТУТ БУДЕ FLATLIST */}
           <ScrollView>
-            <Post />
-            <Post />
+            <ProfilePost />
+            <ProfilePost />
           </ScrollView>
         </View>
       </ImageBackground>

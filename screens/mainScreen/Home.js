@@ -1,29 +1,32 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
 
-import {
-  Ionicons,
-  AntDesign,
-  Feather,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import { useUser } from "../../App";
-import LogOutBtn from "../../components/LogOutBtn";
+import { View } from "react-native";
+import GoBackBtn from "../../components/GoBackBtn";
+
+// import { useNavigationState } from "@react-navigation/native";
 
 const MainTab = createBottomTabNavigator();
 
 export default function Home() {
-  const { isLogIn, setIsLogIn } = useUser();
+  // const navigationState = useNavigationState((state) => state);
+  // const currentRouteName = navigationState.routes[navigationState.index].name;
+
+  // console.log(currentRouteName); // Имя текущего экрана
 
   return (
     <MainTab.Navigator
-      initialRouteName="Posts"
+      initialRouteName="PostsScreen"
+      // screenListeners={{
+      //   state: (event) => {
+      //     console.log(event.route); // Текущий маршрут
+      //   },
+      // }}
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: { height: 83, paddingHorizontal: 70 },
@@ -34,20 +37,11 @@ export default function Home() {
       }}
     >
       <MainTab.Screen
-        name="Posts"
+        name="PostsScreen"
         component={PostsScreen}
-        options={({ navigation }) => ({
-          headerTitle: "Публікації",
-          headerTitleAlign: "center",
-          headerStyle: {
-            height: 88,
-            borderBottomWidth: 1,
-            borderBottomColor: "#B3B3B3",
-          },
-          headerLeftContainerStyle: { marginLeft: 10 },
-          headerRightContainerStyle: { marginRight: 10 },
-          headerRight: () => <LogOutBtn setIsLogIn={setIsLogIn} />,
-
+        options={{
+          // tabBarStyle: { display: "none" },тут нужно отключать для COMMENTSCREEN и MAPSCREEN
+          headerShown: false,
           tabBarIcon: ({ focused, size }) => (
             <View
               style={{
@@ -67,11 +61,9 @@ export default function Home() {
               />
             </View>
           ),
-        })}
-        // options={{
-
-        // }}
+        }}
       />
+
       <MainTab.Screen
         name="CreatePosts"
         component={CreatePostsScreen}
@@ -86,17 +78,7 @@ export default function Home() {
           },
           headerLeftContainerStyle: { marginLeft: 20 },
           headerRightContainerStyle: { marginRight: 20 },
-          headerLeft: () => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
-                navigation.goBack();
-              }}
-            >
-              <AntDesign name="arrowleft" size={24} color="#212121cc" />
-            </TouchableOpacity>
-          ),
-
+          headerLeft: () => <GoBackBtn navigation={navigation} />,
           tabBarIcon: ({ focused, size }) => (
             <View
               style={{
@@ -123,7 +105,6 @@ export default function Home() {
         name="Profile"
         component={ProfileScreen}
         options={{
-          // tabBarStyle: { display: "none" },
           headerShown: false,
           tabBarIcon: ({ focused, size }) => (
             <View
@@ -146,6 +127,10 @@ export default function Home() {
           ),
         }}
       />
+      {/* =============================================================== */}
+      {/* <MainTab.Screen name="MapScreen" component={MapScreen} /> */}
+      {/* <MainTab.Screen name="Home" component={Home} /> */}
+      {/* <MainTab.Screen name="Comments" component={CommentsScreen} /> */}
     </MainTab.Navigator>
   );
 }

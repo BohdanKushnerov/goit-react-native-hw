@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -7,68 +7,182 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import { Entypo, Feather } from "@expo/vector-icons";
 
-export default function CreatePostsScreen() {
+import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
+
+import { useIsFocused } from "@react-navigation/native";
+
+export default function CreatePostsScreen({ navigation }) {
+  const [cameraPermission, setHasCameraPermission] = useState(null);
+  // const [foregroundPermissions, setHasForegroundPermissions] = useState(null);
+
+  const [camera, setCamera] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const isFocused = useIsFocused();
+
+  const [location, setLocation] = useState(null);
+
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [title, setTitle] = useState("");
+  const [address, setAddress] = useState("");
+
+  const titleHandleChangeText = (value) => setTitle(value);
+  const addressHandleChangeText = (value) => setAddress(value);
+
+  // console.log(title, address);
+
+  useEffect(() => {
+    if (isFocused) {
+      (async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        await MediaLibrary.requestPermissionsAsync();
+
+        setHasCameraPermission(status === "granted");
+      })();
+    }
+
+    return () => {
+      // console.log("Unmount CreatePostsScreen");
+      setHasCameraPermission(null);
+    };
+  }, [isFocused]);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+      }
+    })();
+  }, []);
+
+  const takePhoto = async () => {
+    const photo = await camera.takePictureAsync();
+    const location = await Location.getCurrentPositionAsync({});
+    // console.log(location.coords.latitude);
+    // console.log(location.coords.longitude);
+
+    setPhoto(photo.uri);
+    setLocation(location.coords);
+  };
+
+  const sendPhoto = async () => {
+    navigation.navigate("DefaultScreen", { photo, location, title, address });
+  };
+
+  // ==========keyboard================
+
+  useEffect(() => {
+    const showSubBtns = Keyboard.addListener("keyboardDidShow", () => {
+      setIsShowKeyboard(true);
+    });
+    const hideSubBtns = Keyboard.addListener("keyboardDidHide", () => {
+      setIsShowKeyboard(false);
+    });
+
+    return () => {
+      showSubBtns.remove();
+      hideSubBtns.remove();
+    };
+  }, []);
+
+  const keyboardHide = () => {
+    // console.log(1);
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image />
-        <TouchableOpacity style={styles.iconContainer}>
-          <Entypo name="camera" size={24} color="#BDBDBD" />
-        </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <View style={styles.cameraContainer}>
+          {cameraPermission && (
+            <Camera
+              style={{
+                height: 240,
+              }}
+              ref={setCamera}
+            >
+              {photo && (
+                <View style={styles.takePhotoContainer}>
+                  <Image
+                    style={{ height: 100, width: 150 }}
+                    source={{ uri: photo }}
+                  />
+                </View>
+              )}
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.iconContainer}
+                onPress={takePhoto}
+              >
+                <Entypo name="camera" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+            </Camera>
+          )}
+        </View>
+        <View style={{ marginBottom: isShowKeyboard ? 8 : 32 }}>
+          <Text style={styles.imgState}>
+            {photo ? "Редагувати фото" : "Завантажте фото"}
+          </Text>
+        </View>
+        {/* <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}> */}
+        <View style={styles.form}>
+          <View style={styles.inputNameWrap}>
+            <TextInput
+              placeholder="Назва..."
+              style={styles.inputName}
+              placeholderTextColor={"#BDBDBD"}
+              onFocus={() => setIsShowKeyboard(true)}
+              value={title}
+              onChangeText={titleHandleChangeText}
+            />
+          </View>
+          <View style={styles.inputLocationWrap}>
+            <TextInput
+              placeholder="Місцевість..."
+              style={styles.inputLocation}
+              placeholderTextColor={"#BDBDBD"}
+              onFocus={() => setIsShowKeyboard(true)}
+              value={address}
+              onChangeText={addressHandleChangeText}
+            />
+            <Feather
+              style={{ position: "absolute", top: 13 }}
+              name="map-pin"
+              size={24}
+              color="#BDBDBD"
+            />
+          </View>
+          <View style={styles.btnWrap}>
+            <Pressable
+              activeOpacity={0.8}
+              style={styles.btn}
+              onPress={sendPhoto}
+            >
+              <Text style={styles.btnTitle}>Опубліковати</Text>
+            </Pressable>
+          </View>
+          <View style={styles.deleteBtnWrap}>
+            <TouchableOpacity
+              style={styles.deleteBtn}
+              // disabled={}
+            >
+              <Feather name="trash-2" size={24} color="#BDBDBD" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        {/* </KeyboardAvoidingView> */}
       </View>
-      <View style={styles.containerImgState}>
-        <Text style={styles.imgState}>Завантажте фото</Text>
-      </View>
-      <View style={styles.form}>
-        <View style={styles.inputNameWrap}>
-          <TextInput
-            placeholder="Назва..."
-            style={styles.inputName}
-            placeholderTextColor={"#BDBDBD"}
-            // onFocus={() => setIsShowKeyboard(true)}
-            // value={state.password}
-            // onChangeText={passwordHandleChangeText}
-          />
-        </View>
-        <View style={styles.inputLocationWrap}>
-          <TextInput
-            placeholder="Місцевість..."
-            style={styles.inputLocation}
-            placeholderTextColor={"#BDBDBD"}
-            // onFocus={() => setIsShowKeyboard(true)}
-            // value={state.password}
-            // onChangeText={passwordHandleChangeText}
-          />
-          <Feather
-            style={{ position: "absolute", top: 13 }}
-            name="map-pin"
-            size={24}
-            color="#BDBDBD"
-          />
-        </View>
-        <View style={styles.btnWrap}>
-          <Pressable
-            activeOpacity={0.8}
-            style={styles.btn}
-            // onPress={register}
-          >
-            <Text style={styles.btnTitle}>Зареєстуватися</Text>
-          </Pressable>
-        </View>
-        <View style={styles.deleteBtnWrap}>
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            // disabled={}
-          >
-            <Feather name="trash-2" size={24} color="#BDBDBD" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -80,13 +194,13 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
   },
-  imageContainer: {
+  cameraContainer: {
     position: "relative",
     marginBottom: 8,
     width: "100%",
     height: 240,
     // backgroundColor: "#F6F6F6",
-    backgroundColor: "black",
+    // backgroundColor: "black",
     borderRadius: 8,
   },
   iconContainer: {
@@ -100,9 +214,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 50,
   },
-  containerImgState: {
-    marginBottom: 32,
-  },
+  // containerImgState: {
+  //   marginBottom: isShowKeyboard ? 16 : 32,
+  // },
   imgState: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
@@ -166,4 +280,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  //
+  takePhotoContainer: {},
 });
