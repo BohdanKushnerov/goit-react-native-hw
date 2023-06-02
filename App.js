@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-
 import { useFonts } from "expo-font";
 import { NavigationContainer } from "@react-navigation/native";
 import useRoute from "./services/router";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
 
 export const UserContext = createContext();
 export const useUser = () => useContext(UserContext);
@@ -13,7 +14,7 @@ export default function App() {
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
     "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
   });
-  const [isLogIn, setIsLogIn] = useState(true);
+  const [isLogIn, setIsLogIn] = useState(false);
 
   const routing = useRoute(isLogIn);
 
@@ -23,7 +24,9 @@ export default function App() {
 
   return (
     <UserContext.Provider value={{ isLogIn, setIsLogIn }}>
-      <NavigationContainer>{routing}</NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>{routing}</NavigationContainer>
+      </Provider>
     </UserContext.Provider>
   );
 }

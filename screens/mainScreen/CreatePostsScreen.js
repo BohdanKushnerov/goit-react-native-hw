@@ -20,7 +20,7 @@ import * as Location from "expo-location";
 
 import { useIsFocused } from "@react-navigation/native";
 
-export default function CreatePostsScreen({ navigation }) {
+export default function CreatePostsScreen({ route: { params }, navigation }) {
   const [cameraPermission, setHasCameraPermission] = useState(null);
   // const [foregroundPermissions, setHasForegroundPermissions] = useState(null);
 
@@ -39,40 +39,50 @@ export default function CreatePostsScreen({ navigation }) {
 
   // console.log(title, address);
 
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     (async () => {
+  //       const { status } = await Camera.requestCameraPermissionsAsync();
+  //       await MediaLibrary.requestPermissionsAsync();
+
+  //       setHasCameraPermission(status === "granted");
+  //     })();
+  //   }
+
+  //   return () => {
+  //     // console.log("Unmount CreatePostsScreen");
+  //     setHasCameraPermission(null);
+  //   };
+  // }, [isFocused]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     let { status } = await Location.requestForegroundPermissionsAsync();
+  //     if (status !== "granted") {
+  //       console.log("Permission to access location was denied");
+  //     }
+  //   })();
+  // }, []);
+
+  // const takePhoto = async () => {
+  //   const photo = await camera.takePictureAsync();
+  //   const location = await Location.getCurrentPositionAsync({});
+  //   console.log(location.coords.latitude);
+  //   console.log(location.coords.longitude);
+
+  //   setPhoto(photo.uri);
+  //   setLocation(location.coords);
+  // };
+
+  console.log("params", params);
+
   useEffect(() => {
-    if (isFocused) {
-      (async () => {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        await MediaLibrary.requestPermissionsAsync();
+    if (!params) return;
+    setPhoto(params.photo);
+    setLocation(params.location);
+  }, [params]);
 
-        setHasCameraPermission(status === "granted");
-      })();
-    }
-
-    return () => {
-      // console.log("Unmount CreatePostsScreen");
-      setHasCameraPermission(null);
-    };
-  }, [isFocused]);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-      }
-    })();
-  }, []);
-
-  const takePhoto = async () => {
-    const photo = await camera.takePictureAsync();
-    const location = await Location.getCurrentPositionAsync({});
-    // console.log(location.coords.latitude);
-    // console.log(location.coords.longitude);
-
-    setPhoto(photo.uri);
-    setLocation(location.coords);
-  };
+  console.log("photo", photo);
 
   const sendPhoto = async () => {
     navigation.navigate("DefaultScreen", { photo, location, title, address });
@@ -95,7 +105,6 @@ export default function CreatePostsScreen({ navigation }) {
   }, []);
 
   const keyboardHide = () => {
-    // console.log(1);
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
@@ -103,7 +112,7 @@ export default function CreatePostsScreen({ navigation }) {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        <View style={styles.cameraContainer}>
+        {/* <View style={styles.cameraContainer}>
           {cameraPermission && (
             <Camera
               style={{
@@ -128,6 +137,25 @@ export default function CreatePostsScreen({ navigation }) {
               </TouchableOpacity>
             </Camera>
           )}
+        </View> */}
+        <View style={styles.cameraContainer}>
+          <Image
+            style={{
+              // height: 200,
+              // width: "100%",
+              flex: 1,
+              // backgroundColor: "gray",
+            }}
+            source={{ uri: photo }}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("CameraScreen");
+            }}
+            style={styles.iconContainer}
+          >
+            <Entypo name="camera" size={24} color="#BDBDBD" />
+          </TouchableOpacity>
         </View>
         <View style={{ marginBottom: isShowKeyboard ? 8 : 32 }}>
           <Text style={styles.imgState}>
@@ -199,7 +227,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     width: "100%",
     height: 240,
-    // backgroundColor: "#F6F6F6",
+    backgroundColor: "#F6F6F6",
     // backgroundColor: "black",
     borderRadius: 8,
   },

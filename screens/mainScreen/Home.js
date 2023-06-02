@@ -8,6 +8,7 @@ import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 
 import { View } from "react-native";
 import GoBackBtn from "../../components/GoBackBtn";
+import CameraScreen from "../CameraScreen";
 
 // import { useNavigationState } from "@react-navigation/native";
 
@@ -127,6 +128,18 @@ export default function Home() {
           ),
         }}
       />
+      {/* ======================================================= */}
+      <MainTab.Screen
+        name="CameraScreen"
+        component={CameraScreen}
+        options={({ navigation }) => ({
+          tabBarStyle: { display: "none" },
+          headerLeft: () => <GoBackBtn navigation={navigation} />,
+          headerLeftContainerStyle: { marginLeft: 20 },
+          headerRightContainerStyle: { marginRight: 20 },
+        })}
+      />
+
       {/* =============================================================== */}
       {/* <MainTab.Screen name="MapScreen" component={MapScreen} /> */}
       {/* <MainTab.Screen name="Home" component={Home} /> */}
