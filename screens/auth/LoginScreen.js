@@ -14,7 +14,10 @@ import {
   useWindowDimensions,
 } from "react-native";
 
-import { useUser } from "../../App";
+// import { useUser } from "../../App";
+
+import { authSignInUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 const initialState = {
   email: "",
@@ -27,8 +30,10 @@ export default function LoginScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
+  const dispatch = useDispatch();
+
   // контекст
-  const { isLogIn, setIsLogIn } = useUser();
+  // const { isLogIn, setIsLogIn } = useUser();
 
   const windowDimensions = useWindowDimensions();
   const { width: dimensionsWidth } = windowDimensions;
@@ -60,10 +65,12 @@ export default function LoginScreen({ navigation }) {
     // if (state.email && state.password) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
+    // console.log(state);
     setState(initialState);
+    dispatch(authSignInUser(state));
+
     // типа логин
-    setIsLogIn(true);
+    // setIsLogIn(true);
     // } else {
     //   console.log("Не все поля заполнены");
     // }
@@ -178,8 +185,8 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "flex-end",
-    // width: Dimensions.get("window").width,
-    // height: Dimensions.get("window").height,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   form: {
     backgroundColor: "#FFFFFF",

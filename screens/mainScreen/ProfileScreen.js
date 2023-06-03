@@ -10,14 +10,14 @@ import {
   ScrollView,
 } from "react-native";
 import LogOutBtn from "../../components/LogOutBtn";
-import { useUser } from "../../App";
+// import { useUser } from "../../App";
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
 
-import { Feather } from "@expo/vector-icons";
+// import { Feather } from "@expo/vector-icons";
 import ProfilePost from "../../components/ProfilePost";
 
 export default function ProfileScreen() {
-  const { isLogIn, setIsLogIn } = useUser();
+  // const { isLogIn, setIsLogIn } = useUser();
 
   return (
     <View style={styles.container}>
@@ -47,7 +47,8 @@ export default function ProfileScreen() {
             </Pressable>
           </View>
           <View style={styles.logOutBtn}>
-            <LogOutBtn setIsLogIn={setIsLogIn} />
+            {/* <LogOutBtn setIsLogIn={setIsLogIn} /> */}
+            <LogOutBtn />
           </View>
           <Text style={styles.name}>Natali Romanova</Text>
           {/* ТУТ БУДЕ FLATLIST */}

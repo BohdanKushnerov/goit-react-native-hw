@@ -16,7 +16,10 @@ import {
 } from "react-native";
 
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
-import { useUser } from "../../App";
+// import { useUser } from "../../App";
+
+import { authSignUpUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 const initialState = {
   login: "",
@@ -29,10 +32,11 @@ export default function RegistrationScreen({ navigation }) {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [state, setState] = useState(initialState);
+  const dispatch = useDispatch();
   console.log(state.login);
 
   // контекст
-  const { isLogIn, setIsLogIn } = useUser();
+  // const { isLogIn, setIsLogIn } = useUser();
 
   const windowDimensions = useWindowDimensions();
   const { width: dimensionsWidth } = windowDimensions;
@@ -64,10 +68,12 @@ export default function RegistrationScreen({ navigation }) {
     // if (state.login && state.email && state.password) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    console.log(state);
+    // console.log(state);
     setState(initialState);
+
+    dispatch(authSignUpUser(state));
     // типа логин
-    setIsLogIn(true);
+    // setIsLogIn(true);
     // } else {
     //   console.log("Не все поля заполнены");
     // }
