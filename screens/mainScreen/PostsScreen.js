@@ -12,7 +12,6 @@ const NestedScreen = createStackNavigator();
 
 const PostsScreen = () => {
   // const { isLogIn, setIsLogIn } = useUser();
-  console.log("db", db);
 
   return (
     // <NestedScreen.Navigator>

@@ -20,6 +20,12 @@ import * as Location from "expo-location";
 
 import { useIsFocused } from "@react-navigation/native";
 
+import { db, storage, storageRef } from "../../firebase/config";
+
+import { getStorage, ref, uploadBytes } from "firebase/storage";
+
+console.log("storageRef", storageRef);
+
 export default function CreatePostsScreen({ route: { params }, navigation }) {
   const [cameraPermission, setHasCameraPermission] = useState(null);
   // const [foregroundPermissions, setHasForegroundPermissions] = useState(null);
@@ -74,17 +80,14 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
   //   setLocation(location.coords);
   // };
 
-  console.log("params", params);
-
   useEffect(() => {
     if (!params) return;
     setPhoto(params.photo);
     setLocation(params.location);
   }, [params]);
 
-  console.log("photo", photo);
-
   const sendPhoto = async () => {
+    uploadPhotoToStorage();
     navigation.navigate("DefaultScreen", { photo, location, title, address });
   };
 
@@ -107,6 +110,27 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
+  };
+
+  // =======================================
+
+  // console.log(db.storage().ref());
+
+  const uploadPhotoToStorage = async () => {
+    // const data = await db.storage().ref(`postImage/${uniquePostId}`).put(file);
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniquePostId = Date.now().toString();
+
+    // const metadata = {
+    //   contentType: "image/jpeg", // Измените тип в соответствии с вашим файлом
+    // };
+
+    const storageRef = ref(storage, `postImage/${uniquePostId}`);
+    // const data = await uploadBytes(storageRef, file, metadata);
+    const data = await uploadBytes(storageRef, file);
+
+    console.log("data", data);
   };
 
   return (
@@ -150,7 +174,9 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
           />
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("CameraScreen");
+              navigation.navigate("CameraScreen", {
+                fromScreen: "CreatePostsScreen",
+              });
             }}
             style={styles.iconContainer}
           >

@@ -4,8 +4,6 @@ import { Text, View, StyleSheet, FlatList } from "react-native";
 import UserPost from "../../components/UserPost";
 
 export default function DefaultScreen({ route, navigation }) {
-  console.log("route", route);
-  // console.log(navigation);
   const [posts, setPosts] = useState([]);
   // const [location, setLocation] = useState({});
 

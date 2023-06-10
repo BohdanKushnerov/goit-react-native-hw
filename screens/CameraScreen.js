@@ -6,7 +6,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 
-export default function CameraScreen({ navigation }) {
+export default function CameraScreen({ navigation, route: { params } }) {
+  // console.log(props.route.params.fromScreen);
+  // { navigation }
   const [cameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState(null);
@@ -49,7 +51,9 @@ export default function CameraScreen({ navigation }) {
 
   const sendPhoto = async () => {
     // navigation.navigate("DefaultScreen", { photo, location, title, address });
-    navigation.navigate("CreatePosts", { photo, location });
+    if (params.fromScreen === "CreatePostsScreen") {
+      navigation.navigate("CreatePosts", { photo, location });
+    }
   };
 
   return (

@@ -11,7 +11,7 @@ export default function Main() {
   const routing = useRoute(stateChange);
 
   useEffect(() => {
-    console.log("Начало");
+    // console.log("Начало");
     dispatch(authStateChangeUser());
   }, []);
 

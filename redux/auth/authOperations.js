@@ -43,7 +43,7 @@ export const authSignUpUser =
         password
       );
       const user = userCredential.user;
-      console.log("register user", user);
+      // console.log("register user", user);
 
       await updateProfile(auth.currentUser, {
         displayName: login,
@@ -69,10 +69,10 @@ export const authSignOutUser = () => async (dispatch, getState) => {
 };
 
 export const authStateChangeUser = () => async (dispatch, getState) => {
-  console.log("в оператион");
+  // console.log("в оператион");
   await onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("user есть");
+      // console.log("user есть");
       dispatch(
         updateUserProfile({
           userId: user.uid,
