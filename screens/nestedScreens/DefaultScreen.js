@@ -3,25 +3,39 @@ import { Image } from "react-native";
 import { Text, View, StyleSheet, FlatList } from "react-native";
 import UserPost from "../../components/UserPost";
 
-export default function DefaultScreen({ route, navigation }) {
+import { db, auth } from "../../firebase/config";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
+
+export default function DefaultScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
-  // const [location, setLocation] = useState({});
+  console.log(posts);
+
+  console.log(auth);
+
+  const getAllPosts = () => {
+    onSnapshot(collection(db, "posts"), (querySnapshot) => {
+      setPosts(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    });
+  };
 
   useEffect(() => {
-    if (!route.params) return;
-    setPosts((prevState) => [...prevState, route.params]);
-    // setPosts((prevState) => [...prevState, route.params.photo]);
-  }, [route.params]);
-
-  // console.log(posts);
+    getAllPosts();
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image style={styles.profileImage} />
+        <Image
+          style={styles.profileImage}
+          source={{ uri: auth.currentUser.photoURL }}
+        />
         <View>
-          <Text style={styles.name}>Natali Romanova</Text>
-          <Text style={styles.email}>email@example.com</Text>
+          {/* <Text style={styles.name}>Natali Romanova</Text> */}
+          <Text style={styles.name}>{auth.currentUser.displayName}</Text>
+          {/* <Text style={styles.email}>email@example.com</Text> */}
+          <Text style={styles.email}>{auth.currentUser.email}</Text>
         </View>
       </View>
       <View style={{ width: "100%", marginBottom: 70 }}>

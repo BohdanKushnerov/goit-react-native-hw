@@ -21,8 +21,9 @@ import * as Location from "expo-location";
 import { useIsFocused } from "@react-navigation/native";
 
 import { db, storage, storageRef } from "../../firebase/config";
-
-import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 console.log("storageRef", storageRef);
 
@@ -40,45 +41,10 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
 
+  const { userId, nickname } = useSelector((state) => state.auth);
+
   const titleHandleChangeText = (value) => setTitle(value);
   const addressHandleChangeText = (value) => setAddress(value);
-
-  // console.log(title, address);
-
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     (async () => {
-  //       const { status } = await Camera.requestCameraPermissionsAsync();
-  //       await MediaLibrary.requestPermissionsAsync();
-
-  //       setHasCameraPermission(status === "granted");
-  //     })();
-  //   }
-
-  //   return () => {
-  //     // console.log("Unmount CreatePostsScreen");
-  //     setHasCameraPermission(null);
-  //   };
-  // }, [isFocused]);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       console.log("Permission to access location was denied");
-  //     }
-  //   })();
-  // }, []);
-
-  // const takePhoto = async () => {
-  //   const photo = await camera.takePictureAsync();
-  //   const location = await Location.getCurrentPositionAsync({});
-  //   console.log(location.coords.latitude);
-  //   console.log(location.coords.longitude);
-
-  //   setPhoto(photo.uri);
-  //   setLocation(location.coords);
-  // };
 
   useEffect(() => {
     if (!params) return;
@@ -86,9 +52,17 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
     setLocation(params.location);
   }, [params]);
 
-  const sendPhoto = async () => {
-    uploadPhotoToStorage();
-    navigation.navigate("DefaultScreen", { photo, location, title, address });
+  // const sendPhoto = async () => {
+  //   // uploadPhotoToStorage();
+  //   await uploadPostToServer();
+  //   // navigation.navigate("DefaultScreen", { photo, location, title, address });
+  //   await navigation.navigate("DefaultScreen");
+  // };
+  const sendPhoto = () => {
+    // uploadPhotoToStorage();
+    uploadPostToServer();
+    // navigation.navigate("DefaultScreen", { photo, location, title, address });
+    navigation.navigate("DefaultScreen");
   };
 
   // ==========keyboard================
@@ -114,54 +88,39 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
 
   // =======================================
 
-  // console.log(db.storage().ref());
-
   const uploadPhotoToStorage = async () => {
-    // const data = await db.storage().ref(`postImage/${uniquePostId}`).put(file);
     const response = await fetch(photo);
     const file = await response.blob();
     const uniquePostId = Date.now().toString();
-
-    // const metadata = {
-    //   contentType: "image/jpeg", // Измените тип в соответствии с вашим файлом
-    // };
-
     const storageRef = ref(storage, `postImage/${uniquePostId}`);
-    // const data = await uploadBytes(storageRef, file, metadata);
-    const data = await uploadBytes(storageRef, file);
 
-    console.log("data", data);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  };
+
+  const uploadPostToServer = async () => {
+    const photo = await uploadPhotoToStorage();
+    console.log(photo);
+
+    try {
+      const docRef = await addDoc(collection(db, "posts"), {
+        userId,
+        nickname,
+        photo,
+        location,
+        title,
+        address,
+      });
+      console.log("Document written: ", docRef);
+      // console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        {/* <View style={styles.cameraContainer}>
-          {cameraPermission && (
-            <Camera
-              style={{
-                height: 240,
-              }}
-              ref={setCamera}
-            >
-              {photo && (
-                <View style={styles.takePhotoContainer}>
-                  <Image
-                    style={{ height: 100, width: 150 }}
-                    source={{ uri: photo }}
-                  />
-                </View>
-              )}
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.iconContainer}
-                onPress={takePhoto}
-              >
-                <Entypo name="camera" size={24} color="#BDBDBD" />
-              </TouchableOpacity>
-            </Camera>
-          )}
-        </View> */}
         <View style={styles.cameraContainer}>
           <Image
             style={{

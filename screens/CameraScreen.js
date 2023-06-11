@@ -7,7 +7,7 @@ import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 
 export default function CameraScreen({ navigation, route: { params } }) {
-  // console.log(props.route.params.fromScreen);
+  // console.log(params.fromScreen);
   // { navigation }
   const [cameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
@@ -53,6 +53,9 @@ export default function CameraScreen({ navigation, route: { params } }) {
     // navigation.navigate("DefaultScreen", { photo, location, title, address });
     if (params.fromScreen === "CreatePostsScreen") {
       navigation.navigate("CreatePosts", { photo, location });
+    }
+    if (params.fromScreen === "RegistrationScreen") {
+      navigation.navigate("Register", { photo });
     }
   };
 

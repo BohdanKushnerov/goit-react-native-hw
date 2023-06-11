@@ -1,7 +1,7 @@
-import { auth, db } from "../../firebase/config";
+import { auth, db, storage } from "../../firebase/config";
 import { updateUserProfile, authStateChange, authSignOut } from "./authReducer";
 
-// console.log(authSlice);
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import {
   createUserWithEmailAndPassword,
@@ -33,7 +33,7 @@ export const authSignInUser =
       });
   };
 export const authSignUpUser =
-  ({ login, email, password }) =>
+  ({ login, email, password, photo }) =>
   async (dispatch, getState) => {
     try {
       // const auth = getAuth();
@@ -43,19 +43,47 @@ export const authSignUpUser =
         password
       );
       const user = userCredential.user;
-      // console.log("register user", user);
+      console.log("register user", user);
+      console.log("register photo", photo);
+
+      const uploadPhotoToStorage = async () => {
+        const response = await fetch(photo);
+        console.log("response", response);
+
+        const file = await response.blob();
+        console.log("file", file);
+
+        const uniquePostId = Date.now().toString();
+        console.log("uniquePostId", uniquePostId);
+
+        const storageRef = ref(storage, `registerImage/${uniquePostId}`);
+        console.log("storageRef", storageRef);
+
+        await uploadBytes(storageRef, file);
+        return await getDownloadURL(storageRef);
+      };
+
+      // const uploadPhoto = uploadPhotoToStorage();
+
+      // console.log(uploadPhoto);
+
+      // console.log("11111111", uploadPhotoToStorage());
 
       await updateProfile(auth.currentUser, {
         displayName: login,
         // photoURL: "https://example.com/jane-q-user/profile.jpg",
+        photoURL: await uploadPhotoToStorage(photo),
       });
 
       const updatedUser = auth.currentUser;
+
+      console.log("updatedUser", updatedUser);
 
       dispatch(
         updateUserProfile({
           userId: updatedUser.uid,
           nickname: updatedUser.displayName,
+          photo: updatedUser.photoURL,
         })
       );
     } catch (error) {

@@ -25,18 +25,28 @@ const initialState = {
   login: "",
   email: "",
   password: "",
+  photo: null,
 };
 
-export default function RegistrationScreen({ navigation }) {
-  console.log(Platform.OS);
+export default function RegistrationScreen({ navigation, route: { params } }) {
+  // console.log(Platform.OS);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [state, setState] = useState(initialState);
+  const [photo, setPhoto] = useState(null);
   const dispatch = useDispatch();
-  console.log(state.login);
 
-  // контекст
-  // const { isLogIn, setIsLogIn } = useUser();
+  useEffect(() => {
+    if (!params) return;
+    const photoHandleChange = (photo) =>
+      setState((prevState) => ({
+        ...prevState,
+        photo: photo,
+      }));
+
+    photoHandleChange(params.photo);
+    setPhoto(params.photo);
+  }, [params]);
 
   const windowDimensions = useWindowDimensions();
   const { width: dimensionsWidth } = windowDimensions;
@@ -70,13 +80,9 @@ export default function RegistrationScreen({ navigation }) {
     Keyboard.dismiss();
     // console.log(state);
     setState(initialState);
+    console.log("state in register", state);
 
     dispatch(authSignUpUser(state));
-    // типа логин
-    // setIsLogIn(true);
-    // } else {
-    //   console.log("Не все поля заполнены");
-    // }
   };
 
   const loginHandleChangeText = (value) =>
@@ -114,23 +120,19 @@ export default function RegistrationScreen({ navigation }) {
               }}
             >
               <View style={styles.imageContainer}>
-                <Image style={styles.registerImage} />
+                <Image style={styles.registerImage} source={{ uri: photo }} />
                 <Pressable
                   style={{
                     ...styles.imageIcon,
-                    // borderColor: image ? "#BDBDBD" : "#FF6C00",
+                    borderColor: photo ? "#BDBDBD" : "#FF6C00",
                   }}
-                  // onPress={() => {
-                  //   if (!image) {
-                  // навигация на камеру
-                  //   } else {
-                  //  то NULL
-                  //   }
-                  // }}
+                  onPress={() => {
+                    navigation.navigate("CameraScreen", {
+                      fromScreen: "RegistrationScreen",
+                    });
+                  }}
                 >
-                  <SvgForRegisterImg
-                  // image={image}
-                  />
+                  <SvgForRegisterImg photo={photo} />
                 </Pressable>
               </View>
               <View style={styles.header}>

@@ -1,14 +1,14 @@
 import * as React from "react";
 import Svg, { Path } from "react-native-svg";
 
-export default function SvgForRegisterImg({ image = false }) {
+export default function SvgForRegisterImg({ photo = false }) {
   return (
     <Svg
       width={13}
       height={13}
-      fill={image ? "#BDBDBD" : "#FF6C00"}
+      fill={photo ? "#BDBDBD" : "#FF6C00"}
       transform={
-        image
+        photo
           ? [({ rotateY: "45deg" }, { rotateZ: "45deg" })]
           : [({ rotateY: 0 }, { rotateZ: 0 })]
       }
