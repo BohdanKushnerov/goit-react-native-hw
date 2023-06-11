@@ -1,5 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState } from "react";
+import { useEffect } from "react";
 import {
   Text,
   View,
@@ -9,6 +10,11 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { updateIsCommentOrMapScreen } from "../../redux/auth/authReducer";
+
+import { addDoc, collection, doc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 function formatDateTime(date) {
   const months = [
@@ -38,19 +44,48 @@ function formatDateTime(date) {
   return formattedDateTime;
 }
 
-export default function CommentsScreen() {
-  const [inputValue, setInputValue] = useState("");
+export default function CommentsScreen({ route }) {
+  const [comment, setComment] = useState("");
   const [keyboardIsShown, setKeyboardIsShown] = useState(false);
 
   const now = new Date();
   const formattedDateTime = formatDateTime(now);
+
+  const dispatch = useDispatch();
+
+  const { nickname } = useSelector((state) => state.auth);
+  const { postId } = route.params;
+
+  const createComment = async () => {
+    const postRef = doc(db, "posts", `${postId}`);
+    const commentCollectionRef = collection(postRef, "comment");
+
+    try {
+      const newCommentRef = await addDoc(commentCollectionRef, {
+        comment,
+        nickname,
+      });
+      console.log("New comment added: ", newCommentRef);
+      setComment("");
+    } catch (error) {
+      console.error("Error adding comment: ", error);
+    }
+  };
+
+  useEffect(() => {
+    dispatch(updateIsCommentOrMapScreen(true));
+
+    return () => {
+      dispatch(updateIsCommentOrMapScreen(false));
+    };
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={{ marginBottom: 32 }}>
         <Image style={{ height: 240, backgroundColor: "black" }} />
       </View>
-      <View style={{ flexDirection: "row", gap: 16, marginBottom: 24 }}>
+      {/* <View style={{ flexDirection: "row", gap: 16, marginBottom: 24 }}>
         <Image
           style={{
             width: 28,
@@ -83,7 +118,7 @@ export default function CommentsScreen() {
           </Text>
           <Text style={styles.date}>{formattedDateTime}</Text>
         </View>
-      </View>
+      </View> */}
       {/* ================================================================ */}
       {/* <FlatList
         data={comments}
@@ -139,12 +174,16 @@ export default function CommentsScreen() {
       >
         <TextInput
           style={styles.input}
-          value={inputValue}
+          value={comment}
           placeholder="Коментувати..."
           onFocus={() => setKeyboardIsShown(true)}
-          onChangeText={(value) => setInputValue(value)}
+          onChangeText={(value) => setComment(value)}
         />
-        <TouchableOpacity style={styles.btn} disabled={!inputValue}>
+        <TouchableOpacity
+          style={styles.btn}
+          disabled={!comment}
+          onPress={() => createComment()}
+        >
           <AntDesign name="arrowup" size={20} color="white" />
         </TouchableOpacity>
       </View>

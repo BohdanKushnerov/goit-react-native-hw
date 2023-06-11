@@ -49,6 +49,7 @@ export default function DefaultScreen({ navigation }) {
               location={item.location}
               title={item.title}
               address={item.address}
+              postId={item.id}
             />
           )}
         />

@@ -2,9 +2,10 @@ import { Feather } from "@expo/vector-icons";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 
-const UserPost = ({ image, navigation, location, title, address }) => {
+const UserPost = ({ image, navigation, location, title, address, postId }) => {
   // console.log("image", image);
   // console.log("UserPostlocation", location);
+  // console.log(id);
 
   return (
     <View style={{ marginBottom: 32 }}>
@@ -21,7 +22,9 @@ const UserPost = ({ image, navigation, location, title, address }) => {
       <Text style={styles.imageTitle}>{title}</Text>
       <View style={styles.imageDetails}>
         <View style={styles.likesWrap}>
-          <Pressable onPress={() => navigation.navigate("CommentsScreen")}>
+          <Pressable
+            onPress={() => navigation.navigate("CommentsScreen", { postId })}
+          >
             <Feather name="message-circle" size={24} color="#FF6C00" />
           </Pressable>
           <Text style={styles.likes}>8</Text>

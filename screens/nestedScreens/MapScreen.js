@@ -1,9 +1,22 @@
 import React from "react";
+import { useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { updateIsCommentOrMapScreen } from "../../redux/auth/authReducer";
+import { useDispatch } from "react-redux";
 
 export default function MapScreen({ route: { params } }) {
   // console.log("MapScreen", params);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateIsCommentOrMapScreen(true));
+
+    return () => {
+      dispatch(updateIsCommentOrMapScreen(false));
+    };
+  }, []);
 
   return (
     <View style={styles.container}>

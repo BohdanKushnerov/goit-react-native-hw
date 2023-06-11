@@ -9,6 +9,7 @@ import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 import { View } from "react-native";
 import GoBackBtn from "../../components/GoBackBtn";
 import CameraScreen from "../CameraScreen";
+import { useSelector } from "react-redux";
 
 // import { useNavigationState } from "@react-navigation/native";
 
@@ -18,7 +19,11 @@ export default function Home() {
   // const navigationState = useNavigationState((state) => state);
   // const currentRouteName = navigationState.routes[navigationState.index].name;
 
-  // console.log(currentRouteName); // Имя текущего экрана
+  // console.log(navigationState); // Имя текущего экрана
+
+  const onCommentOrMapScreen = useSelector(
+    (state) => state.auth.isCommentOrMapScreen
+  );
 
   return (
     <MainTab.Navigator
@@ -30,7 +35,11 @@ export default function Home() {
       // }}
       screenOptions={{
         tabBarShowLabel: false,
-        tabBarStyle: { height: 83, paddingHorizontal: 70 },
+        tabBarStyle: {
+          display: onCommentOrMapScreen ? "none" : "flex",
+          height: 83,
+          paddingHorizontal: 70,
+        },
         tabBarIconStyle: {
           marginTop: 9,
           marginBottom: 34,
@@ -41,7 +50,13 @@ export default function Home() {
         name="PostsScreen"
         component={PostsScreen}
         options={{
-          // tabBarStyle: { display: "none" },тут нужно отключать для COMMENTSCREEN и MAPSCREEN
+          // ,тут нужно отключать для COMMENTSCREEN и MAPSCREEN
+          // tabBarStyle: {
+          //   display: onCommentOrMapScreen ? "none" : "flex",
+          // justifyContent: "center",
+          // alignItems: "center",
+          // },
+          // {onCommentOrMapScreen && tabBarStyle: { display: "none" }}
           headerShown: false,
           tabBarIcon: ({ focused, size }) => (
             <View
