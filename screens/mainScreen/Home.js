@@ -11,16 +11,9 @@ import GoBackBtn from "../../components/GoBackBtn";
 import CameraScreen from "../CameraScreen";
 import { useSelector } from "react-redux";
 
-// import { useNavigationState } from "@react-navigation/native";
-
 const MainTab = createBottomTabNavigator();
 
 export default function Home() {
-  // const navigationState = useNavigationState((state) => state);
-  // const currentRouteName = navigationState.routes[navigationState.index].name;
-
-  // console.log(navigationState); // Имя текущего экрана
-
   const onCommentOrMapScreen = useSelector(
     (state) => state.auth.isCommentOrMapScreen
   );
@@ -28,11 +21,6 @@ export default function Home() {
   return (
     <MainTab.Navigator
       initialRouteName="PostsScreen"
-      // screenListeners={{
-      //   state: (event) => {
-      //     console.log(event.route); // Текущий маршрут
-      //   },
-      // }}
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -50,13 +38,6 @@ export default function Home() {
         name="PostsScreen"
         component={PostsScreen}
         options={{
-          // ,тут нужно отключать для COMMENTSCREEN и MAPSCREEN
-          // tabBarStyle: {
-          //   display: onCommentOrMapScreen ? "none" : "flex",
-          // justifyContent: "center",
-          // alignItems: "center",
-          // },
-          // {onCommentOrMapScreen && tabBarStyle: { display: "none" }}
           headerShown: false,
           tabBarIcon: ({ focused, size }) => (
             <View
@@ -154,11 +135,6 @@ export default function Home() {
           headerRightContainerStyle: { marginRight: 20 },
         })}
       />
-
-      {/* =============================================================== */}
-      {/* <MainTab.Screen name="MapScreen" component={MapScreen} /> */}
-      {/* <MainTab.Screen name="Home" component={Home} /> */}
-      {/* <MainTab.Screen name="Comments" component={CommentsScreen} /> */}
     </MainTab.Navigator>
   );
 }

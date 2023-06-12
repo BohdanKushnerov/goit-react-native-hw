@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -10,14 +10,44 @@ import {
   ScrollView,
 } from "react-native";
 import LogOutBtn from "../../components/LogOutBtn";
-// import { useUser } from "../../App";
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
-
-// import { Feather } from "@expo/vector-icons";
 import ProfilePost from "../../components/ProfilePost";
 
-export default function ProfileScreen() {
-  // const { isLogIn, setIsLogIn } = useUser();
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { auth, db } from "../../firebase/config";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { FlatList } from "react-native";
+import UserPost from "../../components/UserPost";
+
+export default function ProfileScreen({ navigation }) {
+  const [myPosts, setMyPosts] = useState([]);
+
+  // const { photo } = useSelector((state) => state.auth);
+  // console.log(photo);
+
+  const name = auth.currentUser.displayName;
+  const photo = auth.currentUser.photoURL;
+
+  const { userId } = useSelector((state) => state.auth);
+
+  const getMyPosts = async () => {
+    onSnapshot(
+      query(collection(db, "posts"), where("userId", "==", userId)),
+      (querySnapshot) => {
+        const filteredPosts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setMyPosts(filteredPosts);
+      }
+    );
+  };
+
+  useEffect(() => {
+    getMyPosts();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -27,35 +57,45 @@ export default function ProfileScreen() {
       >
         <View style={styles.bcgProfile}>
           <View style={styles.imageProfileContainer}>
-            <Image style={styles.profileImage} />
+            <Image style={styles.profileImage} source={{ uri: photo }} />
             <Pressable
               style={{
                 ...styles.imageIcon,
-                // borderColor: image ? "#BDBDBD" : "#FF6C00",
+                borderColor: photo ? "#BDBDBD" : "#FF6C00",
               }}
-              // onPress={() => {
-              //   if (!image) {
-              // навигация на камеру
-              //   } else {
-              //  то NULL
-              //   }
-              // }}
+              onPress={() => {
+                navigation.navigate("CameraScreen", {
+                  fromScreen: "ProfileScreen",
+                });
+              }}
             >
-              <SvgForRegisterImg
-              // image={image}
-              />
+              <SvgForRegisterImg photo={photo} />
             </Pressable>
           </View>
           <View style={styles.logOutBtn}>
-            {/* <LogOutBtn setIsLogIn={setIsLogIn} /> */}
             <LogOutBtn />
           </View>
-          <Text style={styles.name}>Natali Romanova</Text>
+          <Text style={styles.name}>{name}</Text>
           {/* ТУТ БУДЕ FLATLIST */}
-          <ScrollView>
+          {/* <ScrollView>
             <ProfilePost />
             <ProfilePost />
-          </ScrollView>
+          </ScrollView> */}
+          {/* ============== */}
+          <FlatList
+            data={myPosts}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <UserPost
+                image={{ uri: item.photo }}
+                navigation={navigation}
+                location={item.location}
+                title={item.title}
+                address={item.address}
+                postId={item.id}
+              />
+            )}
+          />
         </View>
       </ImageBackground>
     </View>

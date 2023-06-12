@@ -9,11 +9,14 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { updateIsCommentOrMapScreen } from "../../redux/auth/authReducer";
 
-import { addDoc, collection, doc } from "firebase/firestore";
+import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 function formatDateTime(date) {
@@ -46,17 +49,18 @@ function formatDateTime(date) {
 
 export default function CommentsScreen({ route }) {
   const [comment, setComment] = useState("");
-  const [keyboardIsShown, setKeyboardIsShown] = useState(false);
-
-  const now = new Date();
-  const formattedDateTime = formatDateTime(now);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [storageComments, setStorageComments] = useState([]);
 
   const dispatch = useDispatch();
 
   const { nickname } = useSelector((state) => state.auth);
-  const { postId } = route.params;
+  const { postId, image } = route.params;
 
   const createComment = async () => {
+    const now = new Date();
+    const formattedDateTime = formatDateTime(now);
+
     const postRef = doc(db, "posts", `${postId}`);
     const commentCollectionRef = collection(postRef, "comment");
 
@@ -64,129 +68,105 @@ export default function CommentsScreen({ route }) {
       const newCommentRef = await addDoc(commentCollectionRef, {
         comment,
         nickname,
+        date: formattedDateTime,
       });
-      console.log("New comment added: ", newCommentRef);
+      // console.log("New comment added: ", newCommentRef);
       setComment("");
+      keyboardHide();
     } catch (error) {
       console.error("Error adding comment: ", error);
     }
   };
 
+  const getAllComments = () => {
+    onSnapshot(
+      collection(db, "posts", `${postId}`, "comment"),
+      (querySnapshot) => {
+        setStorageComments(
+          querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        );
+      }
+    );
+  };
+
   useEffect(() => {
     dispatch(updateIsCommentOrMapScreen(true));
+    getAllComments();
 
     return () => {
       dispatch(updateIsCommentOrMapScreen(false));
     };
   }, []);
 
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+
   return (
     <View style={styles.container}>
-      <View style={{ marginBottom: 32 }}>
-        <Image style={{ height: 240, backgroundColor: "black" }} />
-      </View>
-      {/* <View style={{ flexDirection: "row", gap: 16, marginBottom: 24 }}>
-        <Image
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: 50,
-            backgroundColor: "black",
-          }}
-        />
-        <View style={{ width: "85%", padding: 16, backgroundColor: "#F7F7F7" }}>
-          <Text style={styles.comment}>
-            Really love your most recent photo. I’ve been trying to capture the
-            same thing for a few months and would love some tips!
-          </Text>
-          <Text style={styles.date}>{formattedDateTime}</Text>
-        </View>
-      </View>
-      <View style={{ flexDirection: "row", gap: 16 }}>
-        <Image
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: 50,
-            backgroundColor: "black",
-          }}
-        />
-        <View style={{ width: "85%", padding: 16, backgroundColor: "#F7F7F7" }}>
-          <Text style={styles.comment}>
-            Really love your most recent photo. I’ve been trying to capture the
-            same thing for a few months and would love some tips!
-          </Text>
-          <Text style={styles.date}>{formattedDateTime}</Text>
-        </View>
-      </View> */}
-      {/* ================================================================ */}
-      {/* <FlatList
-        data={comments}
+      <TouchableWithoutFeedback onPress={keyboardHide}>
+        <Image style={styles.mainPhoto} source={image} />
+      </TouchableWithoutFeedback>
+      <FlatList
+        data={storageComments}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View
             style={{
+              ...styles.commentContainer,
               flexDirection: index % 2 === 0 ? "row" : "row-reverse",
-              gap: 16,
-              marginBottom: 24,
             }}
           >
-            {index % 2 === 0 ? (
-              <Image
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 50,
-                  backgroundColor: "black",
-                }}
-              />
-            ) : null}
+            <Image style={styles.commentProfileImage} />
             <View
               style={{
-                width: "85%",
+                width: "89%",
                 padding: 16,
                 backgroundColor: "#F7F7F7",
+                borderTopLeftRadius: index % 2 === 0 ? 0 : 6,
+                borderTopRightRadius: index % 2 === 0 ? 6 : 0,
+                borderBottomRightRadius: 6,
+                borderBottomLeftRadius: 6,
               }}
             >
-              <Text style={styles.comment}>{item.text}</Text>
-              <Text style={styles.date}>{item.date}</Text>
-            </View>
-            {index % 2 === 0 ? null : (
-              <Image
+              <Text style={styles.comment}>{item.comment}</Text>
+              <Text
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 50,
-                  backgroundColor: "black",
+                  ...styles.date,
+                  marginRight: index % 2 === 0 ? 0 : "auto",
                 }}
-              />
-            )}
+              >
+                {item.date}
+              </Text>
+            </View>
           </View>
         )}
-      /> */}
-      <View
-        style={{
-          ...styles.inputContainer,
-          // временно пока не уберу ТАББАР
-          marginTop: 16,
-          marginBottom: keyboardIsShown ? 100 : 32,
-        }}
-      >
-        <TextInput
-          style={styles.input}
-          value={comment}
-          placeholder="Коментувати..."
-          onFocus={() => setKeyboardIsShown(true)}
-          onChangeText={(value) => setComment(value)}
-        />
-        <TouchableOpacity
-          style={styles.btn}
-          disabled={!comment}
-          onPress={() => createComment()}
+      />
+
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}>
+        <View
+          style={{
+            ...styles.inputContainer,
+            marginBottom: isShowKeyboard ? 8 : 16,
+          }}
         >
-          <AntDesign name="arrowup" size={20} color="white" />
-        </TouchableOpacity>
-      </View>
+          <TextInput
+            style={styles.input}
+            value={comment}
+            placeholder="Коментувати..."
+            onFocus={() => setIsShowKeyboard(true)}
+            onChangeText={(value) => setComment(value)}
+          />
+          <TouchableOpacity
+            style={styles.btn}
+            disabled={!comment}
+            onPress={() => createComment()}
+          >
+            <AntDesign name="arrowup" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -194,15 +174,30 @@ export default function CommentsScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
     width: "100%",
     paddingTop: 32,
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: "#FFFFFF",
-    // alignItems: "center",
+  },
+  mainPhoto: {
+    height: 240,
+    backgroundColor: "black",
+    marginBottom: 32,
+    borderRadius: 5,
+  },
+  commentContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  commentProfileImage: {
+    width: 28,
+    height: 28,
+    borderRadius: 50,
+    backgroundColor: "black",
   },
   comment: {
+    marginBottom: 4,
     fontFamily: "Roboto-Regular",
     fontSize: 13,
     lineHeight: 18,
@@ -220,6 +215,7 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "relative",
     height: 50,
+    marginTop: 16,
   },
   input: {
     width: "100%",
@@ -227,6 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
 
     paddingLeft: 16,
+    paddingRight: 55,
 
     borderWidth: 1,
     borderColor: "#E8E8E8",

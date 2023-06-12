@@ -4,13 +4,14 @@ import { Text, View, StyleSheet, FlatList } from "react-native";
 import UserPost from "../../components/UserPost";
 
 import { db, auth } from "../../firebase/config";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
+
+console.log(auth);
 
 export default function DefaultScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
-  console.log(posts);
 
-  console.log(auth);
+  // фото із стейта а не з ауса
 
   const getAllPosts = () => {
     onSnapshot(collection(db, "posts"), (querySnapshot) => {
@@ -32,9 +33,7 @@ export default function DefaultScreen({ navigation }) {
           source={{ uri: auth.currentUser.photoURL }}
         />
         <View>
-          {/* <Text style={styles.name}>Natali Romanova</Text> */}
           <Text style={styles.name}>{auth.currentUser.displayName}</Text>
-          {/* <Text style={styles.email}>email@example.com</Text> */}
           <Text style={styles.email}>{auth.currentUser.email}</Text>
         </View>
       </View>
@@ -61,8 +60,6 @@ export default function DefaultScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
     backgroundColor: "white",
     paddingTop: 32,
     paddingLeft: 16,
@@ -78,7 +75,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: 60,
     height: 60,
-    // backgroundColor: "#F6F6F6",
     backgroundColor: "black",
   },
   name: {

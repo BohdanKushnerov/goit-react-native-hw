@@ -50,26 +50,20 @@ export default function CameraScreen({ navigation, route: { params } }) {
   };
 
   const sendPhoto = async () => {
-    // navigation.navigate("DefaultScreen", { photo, location, title, address });
     if (params.fromScreen === "CreatePostsScreen") {
       navigation.navigate("CreatePosts", { photo, location });
     }
     if (params.fromScreen === "RegistrationScreen") {
       navigation.navigate("Register", { photo });
     }
+    if (params.fromScreen === "ProfileScreen") {
+      // треба обновить профайл фото
+      // navigation.navigate("ProfileScreen", { photo });
+    }
   };
 
   return (
-    // <View style={styles.cameraContainer}>
-    <View
-      style={{
-        // width: "100%",
-        // height: "100%",
-        flex: 1,
-        paddingLeft: 15,
-        paddingRight: 15,
-      }}
-    >
+    <View style={styles.cameraContainer}>
       {cameraPermission && (
         <Camera
           style={{
@@ -90,21 +84,21 @@ export default function CameraScreen({ navigation, route: { params } }) {
         style={{
           height: 200,
           width: "100%",
-
-          backgroundColor: "gray",
+          backgroundColor: "#D0D0D0",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        {photo && (
-          <View style={styles.takePhotoContainer}>
-            <Image
-              style={{
-                height: 200,
-                width: "100%",
-                // backgroundColor: "gray",
-              }}
-              source={{ uri: photo }}
-            />
-          </View>
+        {photo ? (
+          <Image
+            style={{
+              height: 200,
+              width: "100%",
+            }}
+            source={{ uri: photo }}
+          />
+        ) : (
+          <Text>Here will be your photo</Text>
         )}
       </View>
       <TouchableOpacity
@@ -113,13 +107,14 @@ export default function CameraScreen({ navigation, route: { params } }) {
           width: "100%",
           height: 50,
           borderRadius: 50,
-          backgroundColor: "green",
+          // backgroundColor: "#FF6C00",
+          backgroundColor: "orange",
           justifyContent: "center",
           alignItems: "center",
         }}
+        disabled={!photo}
         onPress={sendPhoto}
       >
-        {/* <Entypo name="camera" size={24} color="#BDBDBD" /> */}
         <Text>{photo ? "Send photo" : "Make photo"}</Text>
       </TouchableOpacity>
     </View>
@@ -130,16 +125,14 @@ const styles = StyleSheet.create({
   cameraContainer: {
     flex: 1,
     position: "relative",
-    marginBottom: 8,
-    width: "100%",
-    height: 240,
-    // backgroundColor: "#F6F6F6",
-    // backgroundColor: "black",
-    borderRadius: 8,
+    paddingLeft: 15,
+    paddingRight: 15,
+    gap: 4,
+    marginBottom: 4,
   },
   iconContainer: {
     position: "absolute",
-    top: "36%",
+    top: "85%",
     left: "42%",
     width: 60,
     height: 60,

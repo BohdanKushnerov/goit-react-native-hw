@@ -4,8 +4,8 @@ const initialState = {
   userId: null,
   nickname: null,
   stateChange: false,
-  photo: null,
   isCommentOrMapScreen: false,
+  photo: null,
 };
 
 export const authSlice = createSlice({
@@ -13,7 +13,7 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     updateUserProfile: (state, { payload }) => {
-      // console.log(payload);
+      console.log("payload in updateUserProfile", payload);
       return {
         ...state,
         userId: payload.userId,
@@ -22,7 +22,6 @@ export const authSlice = createSlice({
       };
     },
     updateIsCommentOrMapScreen: (state, { payload }) => {
-      console.log("payload", payload);
       return {
         ...state,
         isCommentOrMapScreen: payload,

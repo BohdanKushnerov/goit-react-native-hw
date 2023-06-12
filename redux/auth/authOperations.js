@@ -43,35 +43,19 @@ export const authSignUpUser =
         password
       );
       const user = userCredential.user;
-      console.log("register user", user);
-      console.log("register photo", photo);
 
       const uploadPhotoToStorage = async () => {
         const response = await fetch(photo);
-        console.log("response", response);
-
         const file = await response.blob();
-        console.log("file", file);
-
         const uniquePostId = Date.now().toString();
-        console.log("uniquePostId", uniquePostId);
-
         const storageRef = ref(storage, `registerImage/${uniquePostId}`);
-        console.log("storageRef", storageRef);
 
         await uploadBytes(storageRef, file);
         return await getDownloadURL(storageRef);
       };
 
-      // const uploadPhoto = uploadPhotoToStorage();
-
-      // console.log(uploadPhoto);
-
-      // console.log("11111111", uploadPhotoToStorage());
-
       await updateProfile(auth.currentUser, {
         displayName: login,
-        // photoURL: "https://example.com/jane-q-user/profile.jpg",
         photoURL: await uploadPhotoToStorage(photo),
       });
 
@@ -79,7 +63,7 @@ export const authSignUpUser =
 
       console.log("updatedUser", updatedUser);
 
-      dispatch(
+      await dispatch(
         updateUserProfile({
           userId: updatedUser.uid,
           nickname: updatedUser.displayName,
@@ -105,6 +89,7 @@ export const authStateChangeUser = () => async (dispatch, getState) => {
         updateUserProfile({
           userId: user.uid,
           nickname: user.displayName,
+          photo: user.photoURL,
         })
       );
       dispatch(authStateChange({ stateChange: true }));

@@ -2,10 +2,26 @@ import { Feather } from "@expo/vector-icons";
 import { Image, Pressable, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
 
+import React, { useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase/config";
+import { useEffect } from "react";
+
 const UserPost = ({ image, navigation, location, title, address, postId }) => {
-  // console.log("image", image);
-  // console.log("UserPostlocation", location);
-  // console.log(id);
+  const [commentQuantity, setCommentQuantity] = useState(0);
+
+  const getQuantityComments = () => {
+    onSnapshot(
+      collection(db, "posts", `${postId}`, "comment"),
+      (querySnapshot) => {
+        setCommentQuantity(querySnapshot.docs.length);
+      }
+    );
+  };
+
+  useEffect(() => {
+    getQuantityComments();
+  }, []);
 
   return (
     <View style={{ marginBottom: 32 }}>
@@ -23,11 +39,13 @@ const UserPost = ({ image, navigation, location, title, address, postId }) => {
       <View style={styles.imageDetails}>
         <View style={styles.likesWrap}>
           <Pressable
-            onPress={() => navigation.navigate("CommentsScreen", { postId })}
+            onPress={() =>
+              navigation.navigate("CommentsScreen", { postId, image })
+            }
           >
             <Feather name="message-circle" size={24} color="#FF6C00" />
           </Pressable>
-          <Text style={styles.likes}>8</Text>
+          <Text style={styles.likes}>{commentQuantity}</Text>
         </View>
         <View style={styles.countryWrap}>
           <Pressable
