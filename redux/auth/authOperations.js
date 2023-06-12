@@ -1,5 +1,10 @@
 import { auth, db, storage } from "../../firebase/config";
-import { updateUserProfile, authStateChange, authSignOut } from "./authReducer";
+import {
+  updateUserProfile,
+  authStateChange,
+  authSignOut,
+  updateUserPhoto,
+} from "./authReducer";
 
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -14,7 +19,6 @@ import {
 export const authSignInUser =
   ({ email, password }) =>
   async (dispatch, getState) => {
-    // const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
@@ -36,13 +40,7 @@ export const authSignUpUser =
   ({ login, email, password, photo }) =>
   async (dispatch, getState) => {
     try {
-      // const auth = getAuth();
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+      await createUserWithEmailAndPassword(auth, email, password);
 
       const uploadPhotoToStorage = async () => {
         const response = await fetch(photo);
@@ -61,11 +59,10 @@ export const authSignUpUser =
 
       const updatedUser = auth.currentUser;
 
-      console.log("updatedUser", updatedUser);
-
-      await dispatch(
+      dispatch(
         updateUserProfile({
           userId: updatedUser.uid,
+          email: updatedUser.email,
           nickname: updatedUser.displayName,
           photo: updatedUser.photoURL,
         })
@@ -75,19 +72,46 @@ export const authSignUpUser =
     }
   };
 
+export const authUpdateUserPhoto = (photo) => async (dispatch, getState) => {
+  try {
+    const uploadPhotoToStorage = async () => {
+      const response = await fetch(photo);
+      const file = await response.blob();
+      const uniquePostId = Date.now().toString();
+      const storageRef = ref(storage, `registerImage/${uniquePostId}`);
+
+      await uploadBytes(storageRef, file);
+      return await getDownloadURL(storageRef);
+    };
+
+    await updateProfile(auth.currentUser, {
+      photoURL: await uploadPhotoToStorage(photo),
+    });
+
+    const updatedUser = auth.currentUser;
+
+    dispatch(
+      updateUserPhoto({
+        photo: updatedUser.photoURL,
+      })
+    );
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 export const authSignOutUser = () => async (dispatch, getState) => {
   await signOut(auth);
   dispatch(authSignOut());
 };
 
 export const authStateChangeUser = () => async (dispatch, getState) => {
-  // console.log("в оператион");
   await onAuthStateChanged(auth, (user) => {
     if (user) {
-      // console.log("user есть");
       dispatch(
         updateUserProfile({
           userId: user.uid,
+          email: user.email,
           nickname: user.displayName,
           photo: user.photoURL,
         })

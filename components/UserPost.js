@@ -37,15 +37,21 @@ const UserPost = ({ image, navigation, location, title, address, postId }) => {
       </View>
       <Text style={styles.imageTitle}>{title}</Text>
       <View style={styles.imageDetails}>
-        <View style={styles.likesWrap}>
-          <Pressable
-            onPress={() =>
-              navigation.navigate("CommentsScreen", { postId, image })
-            }
-          >
-            <Feather name="message-circle" size={24} color="#FF6C00" />
-          </Pressable>
-          <Text style={styles.likes}>{commentQuantity}</Text>
+        <View style={styles.likesAndCommentsWrap}>
+          <View style={styles.commentWrap}>
+            <Pressable
+              onPress={() =>
+                navigation.navigate("CommentsScreen", { postId, image })
+              }
+            >
+              <Feather name="message-circle" size={24} color="#FF6C00" />
+            </Pressable>
+            <Text style={styles.comments}>{commentQuantity}</Text>
+          </View>
+          <View style={styles.likesWrap}>
+            <Feather name="thumbs-up" size={22} color="#FF6C00" />
+            <Text style={styles.likes}>153</Text>
+          </View>
         </View>
         <View style={styles.countryWrap}>
           <Pressable
@@ -53,7 +59,7 @@ const UserPost = ({ image, navigation, location, title, address, postId }) => {
           >
             <Feather name="map-pin" size={24} color="#BDBDBD" />
           </Pressable>
-          <Text style={styles.country}>{address}</Text>
+          <Text style={styles.country}>Ukraine</Text>
         </View>
       </View>
     </View>
@@ -79,6 +85,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     height: 24,
+  },
+  likesAndCommentsWrap: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: "auto",
+    gap: 24,
   },
   likesWrap: {
     flexDirection: "row",

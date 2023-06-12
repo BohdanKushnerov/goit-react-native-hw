@@ -99,7 +99,7 @@ export default function Home() {
       />
 
       <MainTab.Screen
-        name="Profile"
+        name="ProfileScreen"
         component={ProfileScreen}
         options={{
           headerShown: false,

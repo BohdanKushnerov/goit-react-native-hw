@@ -5,15 +5,17 @@ import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+import { useDispatch } from "react-redux";
+import { authUpdateUserPhoto } from "../redux/auth/authOperations";
 
 export default function CameraScreen({ navigation, route: { params } }) {
-  // console.log(params.fromScreen);
-  // { navigation }
   const [cameraPermission, setHasCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [location, setLocation] = useState(null);
   const isFocused = useIsFocused();
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isFocused) {
@@ -26,7 +28,6 @@ export default function CameraScreen({ navigation, route: { params } }) {
     }
 
     return () => {
-      // console.log("Unmount CreatePostsScreen");
       setHasCameraPermission(null);
     };
   }, [isFocused]);
@@ -49,7 +50,7 @@ export default function CameraScreen({ navigation, route: { params } }) {
     setLocation(location.coords);
   };
 
-  const sendPhoto = async () => {
+  const sendPhoto = () => {
     if (params.fromScreen === "CreatePostsScreen") {
       navigation.navigate("CreatePosts", { photo, location });
     }
@@ -58,7 +59,8 @@ export default function CameraScreen({ navigation, route: { params } }) {
     }
     if (params.fromScreen === "ProfileScreen") {
       // треба обновить профайл фото
-      // navigation.navigate("ProfileScreen", { photo });
+      dispatch(authUpdateUserPhoto(photo));
+      navigation.navigate("ProfileScreen");
     }
   };
 

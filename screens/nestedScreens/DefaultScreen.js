@@ -5,6 +5,7 @@ import UserPost from "../../components/UserPost";
 
 import { db, auth } from "../../firebase/config";
 import { collection, onSnapshot } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 console.log(auth);
 
@@ -12,6 +13,11 @@ export default function DefaultScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
 
   // фото із стейта а не з ауса
+
+  const { nickname, email, photo } = useSelector((state) => state.auth);
+
+  console.log(nickname);
+  console.log(email);
 
   const getAllPosts = () => {
     onSnapshot(collection(db, "posts"), (querySnapshot) => {
@@ -28,13 +34,10 @@ export default function DefaultScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image
-          style={styles.profileImage}
-          source={{ uri: auth.currentUser.photoURL }}
-        />
+        <Image style={styles.profileImage} source={{ uri: photo }} />
         <View>
-          <Text style={styles.name}>{auth.currentUser.displayName}</Text>
-          <Text style={styles.email}>{auth.currentUser.email}</Text>
+          <Text style={styles.name}>{nickname}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
       </View>
       <View style={{ width: "100%", marginBottom: 70 }}>
