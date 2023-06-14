@@ -1,4 +1,4 @@
-import { auth, db, storage } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import {
   updateUserProfile,
   authStateChange,
@@ -6,29 +6,25 @@ import {
   updateUserPhoto,
 } from "./authReducer";
 
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
   onAuthStateChanged,
   signOut,
+  getAuth,
 } from "firebase/auth";
+import { uploadPhotoToStorage } from "../../firebase/utils/uploadPhototoStorage";
 
 export const authSignInUser =
   ({ email, password }) =>
   async (dispatch, getState) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
-        console.log("login user", user);
         dispatch(
           updateUserProfile({ userId: user.uid, nickname: user.displayName })
         );
-        // ...
-        console.log("db", db);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -42,19 +38,9 @@ export const authSignUpUser =
     try {
       await createUserWithEmailAndPassword(auth, email, password);
 
-      const uploadPhotoToStorage = async () => {
-        const response = await fetch(photo);
-        const file = await response.blob();
-        const uniquePostId = Date.now().toString();
-        const storageRef = ref(storage, `registerImage/${uniquePostId}`);
-
-        await uploadBytes(storageRef, file);
-        return await getDownloadURL(storageRef);
-      };
-
       await updateProfile(auth.currentUser, {
         displayName: login,
-        photoURL: await uploadPhotoToStorage(photo),
+        photoURL: await uploadPhotoToStorage(photo, "registerImage"),
       });
 
       const updatedUser = auth.currentUser;
@@ -74,27 +60,21 @@ export const authSignUpUser =
 
 export const authUpdateUserPhoto = (photo) => async (dispatch, getState) => {
   try {
-    const uploadPhotoToStorage = async () => {
-      const response = await fetch(photo);
-      const file = await response.blob();
-      const uniquePostId = Date.now().toString();
-      const storageRef = ref(storage, `registerImage/${uniquePostId}`);
+    if (photo) {
+      const photoURL = await uploadPhotoToStorage(photo, "registerImage");
 
-      await uploadBytes(storageRef, file);
-      return await getDownloadURL(storageRef);
-    };
+      await updateProfile(auth.currentUser, {
+        photoURL: photoURL,
+      });
 
-    await updateProfile(auth.currentUser, {
-      photoURL: await uploadPhotoToStorage(photo),
-    });
+      const updatedUser = auth.currentUser;
 
-    const updatedUser = auth.currentUser;
-
-    dispatch(
-      updateUserPhoto({
-        photo: updatedUser.photoURL,
-      })
-    );
+      dispatch(
+        updateUserPhoto({
+          photo: updatedUser.photoURL,
+        })
+      );
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -117,9 +97,6 @@ export const authStateChangeUser = () => async (dispatch, getState) => {
         })
       );
       dispatch(authStateChange({ stateChange: true }));
-    } else {
-      // User is signed out
-      // ...
     }
   });
 };

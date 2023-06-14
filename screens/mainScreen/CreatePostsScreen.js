@@ -17,6 +17,7 @@ import { db, storage } from "../../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { uploadPhotoToStorage } from "../../firebase/utils/uploadPhototoStorage";
 
 export default function CreatePostsScreen({ route: { params }, navigation }) {
   const [photo, setPhoto] = useState(null);
@@ -35,12 +36,6 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
     setPhoto(params.photo);
     setLocation(params.location);
   }, [params]);
-
-  const sendPhoto = () => {
-    uploadPostToServer();
-    onDelete();
-    navigation.navigate("DefaultScreen");
-  };
 
   // ==========keyboard================
 
@@ -65,18 +60,9 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
 
   // ================uploadPhoto=======================
 
-  const uploadPhotoToStorage = async () => {
-    const response = await fetch(photo);
-    const file = await response.blob();
-    const uniquePostId = Date.now().toString();
-    const storageRef = ref(storage, `postImage/${uniquePostId}`);
-
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
-  };
-
-  const uploadPostToServer = async () => {
-    const photo = await uploadPhotoToStorage();
+  const uploadPostToServer = async (uploadPhoto) => {
+    console.log(1);
+    const photo = await uploadPhotoToStorage(uploadPhoto, "postImage");
 
     try {
       const docRef = await addDoc(collection(db, "posts"), {
@@ -87,7 +73,6 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
         title,
         address,
       });
-      // console.log("Document written: ", docRef);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -97,6 +82,12 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
     setPhoto(null);
     setTitle("");
     setAddress("");
+  };
+
+  const sendPhoto = () => {
+    uploadPostToServer(photo);
+    onDelete();
+    navigation.navigate("DefaultScreen");
   };
 
   const colorIcon = photo || title || address ? "#212121" : "#BDBDBD";

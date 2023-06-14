@@ -48,10 +48,10 @@ const UserPost = ({ image, navigation, location, title, address, postId }) => {
             </Pressable>
             <Text style={styles.comments}>{commentQuantity}</Text>
           </View>
-          <View style={styles.likesWrap}>
+          {/* <View style={styles.likesWrap}>
             <Feather name="thumbs-up" size={22} color="#FF6C00" />
             <Text style={styles.likes}>153</Text>
-          </View>
+          </View> */}
         </View>
         <View style={styles.countryWrap}>
           <Pressable
@@ -59,7 +59,7 @@ const UserPost = ({ image, navigation, location, title, address, postId }) => {
           >
             <Feather name="map-pin" size={24} color="#BDBDBD" />
           </Pressable>
-          <Text style={styles.country}>Ukraine</Text>
+          <Text style={styles.country}>{address}</Text>
         </View>
       </View>
     </View>

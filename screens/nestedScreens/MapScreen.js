@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { updateIsCommentOrMapScreen } from "../../redux/auth/authReducer";
+import { isOffTabBarOnSomeScreens } from "../../redux/auth/authReducer";
 import { useDispatch } from "react-redux";
 
 export default function MapScreen({ route: { params } }) {
@@ -11,10 +11,10 @@ export default function MapScreen({ route: { params } }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(updateIsCommentOrMapScreen(true));
+    dispatch(isOffTabBarOnSomeScreens(true));
 
     return () => {
-      dispatch(updateIsCommentOrMapScreen(false));
+      dispatch(isOffTabBarOnSomeScreens(false));
     };
   }, []);
 

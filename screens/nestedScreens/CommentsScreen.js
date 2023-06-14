@@ -14,7 +14,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { updateIsCommentOrMapScreen } from "../../redux/auth/authReducer";
+import { isOffTabBarOnSomeScreens } from "../../redux/auth/authReducer";
 
 import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
@@ -90,11 +90,11 @@ export default function CommentsScreen({ route }) {
   };
 
   useEffect(() => {
-    dispatch(updateIsCommentOrMapScreen(true));
+    dispatch(isOffTabBarOnSomeScreens(true));
     getAllComments();
 
     return () => {
-      dispatch(updateIsCommentOrMapScreen(false));
+      dispatch(isOffTabBarOnSomeScreens(false));
     };
   }, []);
 

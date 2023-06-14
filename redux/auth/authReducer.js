@@ -5,7 +5,7 @@ const initialState = {
   nickname: null,
   email: null,
   stateChange: false,
-  isCommentOrMapScreen: false,
+  offTabBarOnSomeScreens: false,
   photo: null,
 };
 
@@ -28,10 +28,16 @@ export const authSlice = createSlice({
         photo: payload.photo,
       };
     },
-    updateIsCommentOrMapScreen: (state, { payload }) => {
+    // updateIsCommentOrMapScreen: (state, { payload }) => {
+    //   return {
+    //     ...state,
+    //     isCommentOrMapScreen: payload,
+    //   };
+    // },
+    isOffTabBarOnSomeScreens: (state, { payload }) => {
       return {
         ...state,
-        isCommentOrMapScreen: payload,
+        offTabBarOnSomeScreens: payload,
       };
     },
     authStateChange: (state, { payload }) => ({
@@ -46,6 +52,6 @@ export const {
   updateUserProfile,
   authStateChange,
   authSignOut,
-  updateIsCommentOrMapScreen,
+  isOffTabBarOnSomeScreens,
   updateUserPhoto,
 } = authSlice.actions;

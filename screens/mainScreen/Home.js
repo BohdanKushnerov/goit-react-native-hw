@@ -14,9 +14,7 @@ import { useSelector } from "react-redux";
 const MainTab = createBottomTabNavigator();
 
 export default function Home() {
-  const onCommentOrMapScreen = useSelector(
-    (state) => state.auth.isCommentOrMapScreen
-  );
+  const isOffTabBar = useSelector((state) => state.auth.offTabBarOnSomeScreens);
 
   return (
     <MainTab.Navigator
@@ -24,7 +22,7 @@ export default function Home() {
       screenOptions={{
         tabBarShowLabel: false,
         tabBarStyle: {
-          display: onCommentOrMapScreen ? "none" : "flex",
+          display: isOffTabBar ? "none" : "flex",
           height: 83,
           paddingHorizontal: 70,
         },
@@ -97,7 +95,6 @@ export default function Home() {
           ),
         })}
       />
-
       <MainTab.Screen
         name="ProfileScreen"
         component={ProfileScreen}
@@ -129,7 +126,7 @@ export default function Home() {
         name="CameraScreen"
         component={CameraScreen}
         options={({ navigation }) => ({
-          tabBarStyle: { display: "none" },
+          tabBarButton: () => null,
           headerLeft: () => <GoBackBtn navigation={navigation} />,
           headerLeftContainerStyle: { marginLeft: 20 },
           headerRightContainerStyle: { marginRight: 20 },

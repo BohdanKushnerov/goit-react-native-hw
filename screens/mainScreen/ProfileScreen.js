@@ -7,14 +7,13 @@ import {
   Dimensions,
   Image,
   Pressable,
-  ScrollView,
 } from "react-native";
 import LogOutBtn from "../../components/LogOutBtn";
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
 import ProfilePost from "../../components/ProfilePost";
 
 import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { auth, db } from "../../firebase/config";
+import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { FlatList } from "react-native";
@@ -23,13 +22,10 @@ import UserPost from "../../components/UserPost";
 export default function ProfileScreen({ navigation }) {
   const [myPosts, setMyPosts] = useState([]);
 
-  // const { photo } = useSelector((state) => state.auth);
-  // console.log(photo);
+  const { userId, nickname, photo } = useSelector((state) => state.auth);
 
-  const name = auth.currentUser.displayName;
-  const photo = auth.currentUser.photoURL;
-
-  const { userId } = useSelector((state) => state.auth);
+  // const state = useSelector((state) => state.auth);
+  // console.log(state);
 
   const getMyPosts = async () => {
     onSnapshot(
@@ -75,13 +71,8 @@ export default function ProfileScreen({ navigation }) {
           <View style={styles.logOutBtn}>
             <LogOutBtn />
           </View>
-          <Text style={styles.name}>{name}</Text>
-          {/* ТУТ БУДЕ FLATLIST */}
-          {/* <ScrollView>
-            <ProfilePost />
-            <ProfilePost />
-          </ScrollView> */}
-          {/* ============== */}
+          <Text style={styles.name}>{nickname}</Text>
+          {/* <Text>You don't have any posts</Text> */}
           <FlatList
             data={myPosts}
             keyExtractor={(_, index) => index.toString()}

@@ -7,6 +7,7 @@ import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { useDispatch } from "react-redux";
 import { authUpdateUserPhoto } from "../redux/auth/authOperations";
+import { isOffTabBarOnSomeScreens } from "../redux/auth/authReducer";
 
 export default function CameraScreen({ navigation, route: { params } }) {
   const [cameraPermission, setHasCameraPermission] = useState(null);
@@ -20,6 +21,8 @@ export default function CameraScreen({ navigation, route: { params } }) {
   useEffect(() => {
     if (isFocused) {
       (async () => {
+        dispatch(isOffTabBarOnSomeScreens(true));
+
         const { status } = await Camera.requestCameraPermissionsAsync();
         await MediaLibrary.requestPermissionsAsync();
 
@@ -29,6 +32,7 @@ export default function CameraScreen({ navigation, route: { params } }) {
 
     return () => {
       setHasCameraPermission(null);
+      dispatch(isOffTabBarOnSomeScreens(false));
     };
   }, [isFocused]);
 
@@ -44,7 +48,6 @@ export default function CameraScreen({ navigation, route: { params } }) {
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
     const location = await Location.getCurrentPositionAsync({});
-    // console.log(location);
 
     setPhoto(photo.uri);
     setLocation(location.coords);
@@ -58,7 +61,6 @@ export default function CameraScreen({ navigation, route: { params } }) {
       navigation.navigate("Register", { photo });
     }
     if (params.fromScreen === "ProfileScreen") {
-      // треба обновить профайл фото
       dispatch(authUpdateUserPhoto(photo));
       navigation.navigate("ProfileScreen");
     }
