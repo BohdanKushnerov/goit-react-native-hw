@@ -14,12 +14,9 @@ import {
   Dimensions,
   useWindowDimensions,
 } from "react-native";
-
-import SvgForRegisterImg from "../../components/SvgForRegisterImg";
-// import { useUser } from "../../App";
-
 import { authSignUpUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
+import SvgForRegisterImg from "../../components/SvgForRegisterImg";
 
 const initialState = {
   login: "",
@@ -29,7 +26,6 @@ const initialState = {
 };
 
 export default function RegistrationScreen({ navigation, route: { params } }) {
-  // console.log(Platform.OS);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [state, setState] = useState(initialState);
@@ -75,12 +71,10 @@ export default function RegistrationScreen({ navigation, route: { params } }) {
   };
 
   const register = () => {
-    // if (state.login && state.email && state.password) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    // console.log(state);
     setState(initialState);
-    console.log("state in register", state);
+    // console.log("state in register", state);
 
     dispatch(authSignUpUser(state));
   };

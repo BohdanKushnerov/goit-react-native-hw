@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-// import { getStorage } from "firebase/storage";
 import { getStorage, ref } from "firebase/storage";
 
 import {
@@ -28,4 +27,3 @@ export const auth = initializeAuth(app, {
 export const db = getFirestore(app);
 export const storage = getStorage(app, "gs://rn-my-project-8682e.appspot.com");
 export const storageRef = ref(storage);
-// export const storage = getStorage(app);

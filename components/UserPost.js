@@ -1,19 +1,17 @@
 import { Feather } from "@expo/vector-icons";
-import { Image, Pressable, StyleSheet, Text } from "react-native";
-import { View } from "react-native";
-
-import React, { useState } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { db } from "../firebase/config";
-import { useEffect } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const UserPost = ({ image, navigation, location, title, address, postId }) => {
   const [commentQuantity, setCommentQuantity] = useState(0);
 
   const getQuantityComments = () => {
     onSnapshot(
-      collection(db, "posts", `${postId}`, "comment"),
+      collection(db, "posts", `${postId}`, "comments"),
       (querySnapshot) => {
+        console.log(querySnapshot.docs);
         setCommentQuantity(querySnapshot.docs.length);
       }
     );
@@ -21,7 +19,7 @@ const UserPost = ({ image, navigation, location, title, address, postId }) => {
 
   useEffect(() => {
     getQuantityComments();
-  }, []);
+  }, [postId]);
 
   return (
     <View style={{ marginBottom: 32 }}>

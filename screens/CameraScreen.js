@@ -1,13 +1,13 @@
-import { Entypo } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
-import { Camera } from "expo-camera";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import * as MediaLibrary from "expo-media-library";
-import * as Location from "expo-location";
+import { useIsFocused } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { authUpdateUserPhoto } from "../redux/auth/authOperations";
 import { isOffTabBarOnSomeScreens } from "../redux/auth/authReducer";
+import * as MediaLibrary from "expo-media-library";
+import { Camera } from "expo-camera";
+import * as Location from "expo-location";
+import { Entypo } from "@expo/vector-icons";
 
 export default function CameraScreen({ navigation, route: { params } }) {
   const [cameraPermission, setHasCameraPermission] = useState(null);
@@ -111,7 +111,6 @@ export default function CameraScreen({ navigation, route: { params } }) {
           width: "100%",
           height: 50,
           borderRadius: 50,
-          // backgroundColor: "#FF6C00",
           backgroundColor: "orange",
           justifyContent: "center",
           alignItems: "center",
@@ -145,9 +144,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 50,
   },
-  // containerImgState: {
-  //   marginBottom: isShowKeyboard ? 16 : 32,
-  // },
   imgState: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,

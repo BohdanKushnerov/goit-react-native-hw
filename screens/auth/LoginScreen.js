@@ -13,9 +13,6 @@ import {
   Dimensions,
   useWindowDimensions,
 } from "react-native";
-
-// import { useUser } from "../../App";
-
 import { authSignInUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
 
@@ -25,15 +22,11 @@ const initialState = {
 };
 
 export default function LoginScreen({ navigation }) {
-  // console.log(Platform.OS);
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const dispatch = useDispatch();
-
-  // контекст
-  // const { isLogIn, setIsLogIn } = useUser();
 
   const windowDimensions = useWindowDimensions();
   const { width: dimensionsWidth } = windowDimensions;
@@ -62,18 +55,10 @@ export default function LoginScreen({ navigation }) {
   };
 
   const register = () => {
-    // if (state.email && state.password) {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
-    // console.log(state);
     setState(initialState);
     dispatch(authSignInUser(state));
-
-    // типа логин
-    // setIsLogIn(true);
-    // } else {
-    //   console.log("Не все поля заполнены");
-    // }
   };
 
   const emailHandleChangeText = (value) =>
@@ -105,7 +90,6 @@ export default function LoginScreen({ navigation }) {
               style={{
                 ...styles.form,
                 paddingBottom: isShowKeyboard ? 32 : 78,
-                // width: dimensions,
               }}
             >
               <View style={styles.header}>

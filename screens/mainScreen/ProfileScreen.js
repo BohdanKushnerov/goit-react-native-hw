@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -7,25 +7,19 @@ import {
   Dimensions,
   Image,
   Pressable,
+  FlatList,
 } from "react-native";
+import { db } from "../../firebase/config";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { useSelector } from "react-redux";
 import LogOutBtn from "../../components/LogOutBtn";
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
-import ProfilePost from "../../components/ProfilePost";
-
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { FlatList } from "react-native";
 import UserPost from "../../components/UserPost";
 
 export default function ProfileScreen({ navigation }) {
   const [myPosts, setMyPosts] = useState([]);
 
   const { userId, nickname, photo } = useSelector((state) => state.auth);
-
-  // const state = useSelector((state) => state.auth);
-  // console.log(state);
 
   const getMyPosts = async () => {
     onSnapshot(
@@ -72,7 +66,6 @@ export default function ProfileScreen({ navigation }) {
             <LogOutBtn />
           </View>
           <Text style={styles.name}>{nickname}</Text>
-          {/* <Text>You don't have any posts</Text> */}
           <FlatList
             data={myPosts}
             keyExtractor={(_, index) => index.toString()}

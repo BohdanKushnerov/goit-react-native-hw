@@ -1,15 +1,13 @@
 import React from "react";
+import { View } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useSelector } from "react-redux";
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
-
-import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
-
-import { View } from "react-native";
-import GoBackBtn from "../../components/GoBackBtn";
 import CameraScreen from "../CameraScreen";
-import { useSelector } from "react-redux";
+import GoBackBtn from "../../components/GoBackBtn";
+import { Ionicons, AntDesign, Feather } from "@expo/vector-icons";
 
 const MainTab = createBottomTabNavigator();
 

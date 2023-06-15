@@ -1,10 +1,8 @@
 import { createStackNavigator } from "@react-navigation/stack";
-
 import RegistrationScreen from "../screens/auth/RegistrationScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import CameraScreen from "../screens/CameraScreen";
 import Home from "../screens/mainScreen/Home";
-
 import GoBackBtn from "../components/GoBackBtn";
 
 const AuthStack = createStackNavigator();

@@ -1,20 +1,14 @@
 import React from "react";
-
 import { createStackNavigator } from "@react-navigation/stack";
 import DefaultScreen from "../nestedScreens/DefaultScreen";
 import MapScreen from "../nestedScreens/MapScreen";
 import CommentsScreen from "../nestedScreens/CommentsScreen";
 import LogOutBtn from "../../components/LogOutBtn";
-import { db } from "../../firebase/config";
-// import { useUser } from "../../App";
 
 const NestedScreen = createStackNavigator();
 
 const PostsScreen = () => {
-  // const { isLogIn, setIsLogIn } = useUser();
-
   return (
-    // <NestedScreen.Navigator>
     <NestedScreen.Navigator>
       <NestedScreen.Screen
         name="DefaultScreen"
@@ -29,7 +23,6 @@ const PostsScreen = () => {
           },
           headerLeftContainerStyle: { marginLeft: 10 },
           headerRightContainerStyle: { marginRight: 10 },
-          // headerRight: () => <LogOutBtn setIsLogIn={setIsLogIn} />,
           headerRight: () => <LogOutBtn />,
         }}
       />

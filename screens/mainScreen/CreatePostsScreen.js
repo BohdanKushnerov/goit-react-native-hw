@@ -11,13 +11,11 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
-
-import { Entypo, Feather } from "@expo/vector-icons";
-import { db, storage } from "../../firebase/config";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db } from "../../firebase/config";
 import { collection, addDoc } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { uploadPhotoToStorage } from "../../firebase/utils/uploadPhototoStorage";
+import { Entypo, Feather } from "@expo/vector-icons";
 
 export default function CreatePostsScreen({ route: { params }, navigation }) {
   const [photo, setPhoto] = useState(null);
@@ -61,11 +59,10 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
   // ================uploadPhoto=======================
 
   const uploadPostToServer = async (uploadPhoto) => {
-    console.log(1);
     const photo = await uploadPhotoToStorage(uploadPhoto, "postImage");
 
     try {
-      const docRef = await addDoc(collection(db, "posts"), {
+      await addDoc(collection(db, "posts"), {
         userId,
         nickname,
         photo,
@@ -183,7 +180,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 240,
     backgroundColor: "#F6F6F6",
-    // backgroundColor: "black",
     borderRadius: 8,
   },
   mainImage: {
@@ -199,9 +195,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 50,
   },
-  // containerImgState: {
-  //   marginBottom: isShowKeyboard ? 16 : 32,
-  // },
   imgState: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
@@ -251,7 +244,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     textAlign: "center",
-    // color: "#BDBDBD",
     color: "#FFFFFF",
   },
   deleteBtnWrap: {
@@ -265,6 +257,4 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  //
-  takePhotoContainer: {},
 });

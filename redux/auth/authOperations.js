@@ -1,19 +1,17 @@
-import { auth, db } from "../../firebase/config";
-import {
-  updateUserProfile,
-  authStateChange,
-  authSignOut,
-  updateUserPhoto,
-} from "./authReducer";
-
+import { auth } from "../../firebase/config";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
   onAuthStateChanged,
   signOut,
-  getAuth,
 } from "firebase/auth";
+import {
+  updateUserProfile,
+  authStateChange,
+  authSignOut,
+  updateUserPhoto,
+} from "./authReducer";
 import { uploadPhotoToStorage } from "../../firebase/utils/uploadPhototoStorage";
 
 export const authSignInUser =
@@ -36,23 +34,39 @@ export const authSignUpUser =
   ({ login, email, password, photo }) =>
   async (dispatch, getState) => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      if (photo) {
+        await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(auth.currentUser, {
+          displayName: login,
+          photoURL: await uploadPhotoToStorage(photo, "registerImage"),
+        });
 
-      await updateProfile(auth.currentUser, {
-        displayName: login,
-        photoURL: await uploadPhotoToStorage(photo, "registerImage"),
-      });
+        const updatedUser = auth.currentUser;
 
-      const updatedUser = auth.currentUser;
+        dispatch(
+          updateUserProfile({
+            userId: updatedUser.uid,
+            email: updatedUser.email,
+            nickname: updatedUser.displayName,
+            photo: updatedUser.photoURL,
+          })
+        );
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(auth.currentUser, {
+          displayName: login,
+        });
 
-      dispatch(
-        updateUserProfile({
-          userId: updatedUser.uid,
-          email: updatedUser.email,
-          nickname: updatedUser.displayName,
-          photo: updatedUser.photoURL,
-        })
-      );
+        const updatedUser = auth.currentUser;
+
+        dispatch(
+          updateUserProfile({
+            userId: updatedUser.uid,
+            email: updatedUser.email,
+            nickname: updatedUser.displayName,
+          })
+        );
+      }
     } catch (error) {
       console.log(error.message);
     }

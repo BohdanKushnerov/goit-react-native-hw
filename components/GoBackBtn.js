@@ -1,5 +1,5 @@
-import { AntDesign } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 
 const GoBackBtn = ({ navigation }) => {
   return (

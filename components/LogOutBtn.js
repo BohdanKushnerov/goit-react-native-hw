@@ -1,13 +1,12 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { authSignOutUser } from "../redux/auth/authOperations";
+import { MaterialIcons } from "@expo/vector-icons";
 
-const LogOutBtn = ({ setIsLogIn }) => {
+const LogOutBtn = () => {
   const dispatch = useDispatch();
+
   const handleLogout = () => {
-    // navigation.navigate("Register");
-    // setIsLogIn(false);
     dispatch(authSignOutUser());
   };
 

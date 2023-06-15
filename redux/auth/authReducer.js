@@ -28,12 +28,6 @@ export const authSlice = createSlice({
         photo: payload.photo,
       };
     },
-    // updateIsCommentOrMapScreen: (state, { payload }) => {
-    //   return {
-    //     ...state,
-    //     isCommentOrMapScreen: payload,
-    //   };
-    // },
     isOffTabBarOnSomeScreens: (state, { payload }) => {
       return {
         ...state,

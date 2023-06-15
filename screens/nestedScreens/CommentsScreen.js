@@ -1,6 +1,4 @@
-import { AntDesign } from "@expo/vector-icons";
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -13,39 +11,12 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { isOffTabBarOnSomeScreens } from "../../redux/auth/authReducer";
-
-import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
-
-function formatDateTime(date) {
-  const months = [
-    "січня",
-    "лютого",
-    "березня",
-    "квітня",
-    "травня",
-    "червня",
-    "липня",
-    "серпня",
-    "вересня",
-    "жовтня",
-    "листопада",
-    "грудня",
-  ];
-
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  const formattedDateTime = `${day} ${month}, ${year} | ${hours
-    .toString()
-    .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-  return formattedDateTime;
-}
+import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
+import { isOffTabBarOnSomeScreens } from "../../redux/auth/authReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { AntDesign } from "@expo/vector-icons";
+import formatDateTime from "../../utils/formatDateTime";
 
 export default function CommentsScreen({ route }) {
   const [comment, setComment] = useState("");
@@ -54,7 +25,7 @@ export default function CommentsScreen({ route }) {
 
   const dispatch = useDispatch();
 
-  const { nickname } = useSelector((state) => state.auth);
+  const { nickname, photo } = useSelector((state) => state.auth);
   const { postId, image } = route.params;
 
   const createComment = async () => {
@@ -62,15 +33,16 @@ export default function CommentsScreen({ route }) {
     const formattedDateTime = formatDateTime(now);
 
     const postRef = doc(db, "posts", `${postId}`);
-    const commentCollectionRef = collection(postRef, "comment");
+    const commentCollectionRef = collection(postRef, "comments");
 
     try {
-      const newCommentRef = await addDoc(commentCollectionRef, {
+      await addDoc(commentCollectionRef, {
         comment,
         nickname,
+        photo,
         date: formattedDateTime,
       });
-      // console.log("New comment added: ", newCommentRef);
+
       setComment("");
       keyboardHide();
     } catch (error) {
@@ -80,7 +52,7 @@ export default function CommentsScreen({ route }) {
 
   const getAllComments = () => {
     onSnapshot(
-      collection(db, "posts", `${postId}`, "comment"),
+      collection(db, "posts", `${postId}`, "comments"),
       (querySnapshot) => {
         setStorageComments(
           querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
@@ -118,7 +90,10 @@ export default function CommentsScreen({ route }) {
               flexDirection: index % 2 === 0 ? "row" : "row-reverse",
             }}
           >
-            <Image style={styles.commentProfileImage} />
+            <Image
+              style={styles.commentProfileImage}
+              source={{ uri: item.photo }}
+            />
             <View
               style={{
                 width: "89%",

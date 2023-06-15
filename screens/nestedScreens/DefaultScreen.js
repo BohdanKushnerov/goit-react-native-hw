@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Image } from "react-native";
-import { Text, View, StyleSheet, FlatList } from "react-native";
-import UserPost from "../../components/UserPost";
-
-import { db, auth } from "../../firebase/config";
+import { Text, View, StyleSheet, FlatList, Image } from "react-native";
+import { db } from "../../firebase/config";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useSelector } from "react-redux";
-
-console.log(auth);
+import UserPost from "../../components/UserPost";
 
 export default function DefaultScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
 
-  // фото із стейта а не з ауса
+  console.log("posts", posts);
 
   const { nickname, email, photo } = useSelector((state) => state.auth);
-
-  console.log(nickname);
-  console.log(email);
 
   const getAllPosts = () => {
     onSnapshot(collection(db, "posts"), (querySnapshot) => {
@@ -78,7 +71,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: 60,
     height: 60,
-    backgroundColor: "black",
+    backgroundColor: "gray",
   },
   name: {
     fontFamily: "Roboto-Bold",
