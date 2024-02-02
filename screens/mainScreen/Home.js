@@ -48,7 +48,7 @@ export default function Home() {
               }}
             >
               <Ionicons
-                name="ios-grid-outline"
+                name="grid-outline"
                 size={size}
                 color={focused ? "white" : "#212121CC"}
               />

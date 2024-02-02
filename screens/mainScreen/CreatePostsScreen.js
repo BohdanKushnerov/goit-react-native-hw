@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { db } from "../../firebase/config";
 import { collection, addDoc } from "firebase/firestore";
