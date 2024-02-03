@@ -10,7 +10,13 @@ import {
   FlatList,
 } from "react-native";
 import { db } from "../../firebase/config";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 import { useSelector } from "react-redux";
 import LogOutBtn from "../../components/LogOutBtn";
 import SvgForRegisterImg from "../../components/SvgForRegisterImg";
@@ -22,8 +28,14 @@ export default function ProfileScreen({ navigation }) {
   const { userId, nickname, photo } = useSelector((state) => state.auth);
 
   const getMyPosts = async () => {
+    const queryParams = query(
+      collection(db, "posts"),
+      orderBy("date", "desc"),
+      where("userId", "==", userId)
+    );
+
     onSnapshot(
-      query(collection(db, "posts"), where("userId", "==", userId)),
+      query(queryParams),
       (querySnapshot) => {
         const filteredPosts = querySnapshot.docs.map((doc) => ({
           id: doc.id,

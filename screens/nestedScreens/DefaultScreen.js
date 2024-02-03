@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, FlatList, Image } from "react-native";
 import { db } from "../../firebase/config";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import UserPost from "../../components/UserPost";
 
 export default function DefaultScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
 
-  console.log("posts", posts);
+  // console.log("posts", posts);
 
   const { nickname, email, photo } = useSelector((state) => state.auth);
 
-  const getAllPosts = () => {
-    onSnapshot(collection(db, "posts"), (querySnapshot) => {
-      setPosts(
-        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-      );
-    });
-  };
-
   useEffect(() => {
-    getAllPosts();
+    const queryParams = query(collection(db, "posts"), orderBy("date", "desc"));
+
+    const unsubscribe = onSnapshot(queryParams, (querySnapshot) => {
+      // console.log(querySnapshot.docs);
+      const arr = querySnapshot.docs.map((doc) => {
+        // console.log("doc", doc.data());
+        return {
+          ...doc.data(),
+          id: doc.id,
+        };
+      });
+
+      setPosts([...arr]);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
