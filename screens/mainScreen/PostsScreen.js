@@ -21,8 +21,8 @@ const PostsScreen = () => {
             borderBottomWidth: 1,
             borderBottomColor: "#B3B3B3",
           },
-          headerLeftContainerStyle: { marginLeft: 24 },
-          headerRightContainerStyle: { marginRight: 24 },
+          headerLeftContainerStyle: { paddingLeft: 24 },
+          headerRightContainerStyle: { paddingRight: 24 },
           headerRight: () => <LogOutBtn />,
         }}
       />

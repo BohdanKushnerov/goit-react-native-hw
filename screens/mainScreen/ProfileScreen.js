@@ -34,17 +34,14 @@ export default function ProfileScreen({ navigation }) {
       where("userId", "==", userId)
     );
 
-    onSnapshot(
-      query(queryParams),
-      (querySnapshot) => {
-        const filteredPosts = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+    onSnapshot(query(queryParams), (querySnapshot) => {
+      const filteredPosts = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-        setMyPosts(filteredPosts);
-      }
-    );
+      setMyPosts(filteredPosts);
+    });
   };
 
   useEffect(() => {
@@ -78,20 +75,33 @@ export default function ProfileScreen({ navigation }) {
             <LogOutBtn />
           </View>
           <Text style={styles.name}>{nickname}</Text>
-          <FlatList
-            data={myPosts}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item }) => (
-              <UserPost
-                image={{ uri: item.photo }}
-                navigation={navigation}
-                location={item.location}
-                title={item.title}
-                address={item.address}
-                postId={item.id}
-              />
-            )}
-          />
+          {myPosts.length > 0 && (
+            <Text style={styles.quantityPosts}>
+              Всього публікацій: {myPosts.length}
+            </Text>
+          )}
+          {myPosts.length === 0 ? (
+            <View style={styles.noPosts}>
+              <Text style={styles.noPostsMessage}>
+                Ще немає постів, зробіть перший ✌️
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={myPosts}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={({ item }) => (
+                <UserPost
+                  image={{ uri: item.photo }}
+                  navigation={navigation}
+                  location={item.location}
+                  title={item.title}
+                  address={item.address}
+                  postId={item.id}
+                />
+              )}
+            />
+          )}
         </View>
       </ImageBackground>
     </View>
@@ -163,5 +173,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     letterSpacing: 0.01,
     color: "#212121",
+  },
+  quantityPosts: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 32,
+    color: "#212121",
+    textAlign: "right",
+  },
+  noPosts: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noPostsMessage: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 24,
+    lineHeight: 32,
+    color: "#212121",
+    textAlign: "center",
   },
 });
