@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { db } from "../../firebase/config";
 import { addDoc, collection, doc, onSnapshot } from "firebase/firestore";
@@ -80,44 +81,53 @@ export default function CommentsScreen({ route }) {
       <TouchableWithoutFeedback onPress={keyboardHide}>
         <Image style={styles.mainPhoto} source={image} />
       </TouchableWithoutFeedback>
-      <FlatList
-        data={storageComments}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => (
-          <View
-            style={{
-              ...styles.commentContainer,
-              flexDirection: index % 2 === 0 ? "row" : "row-reverse",
-            }}
-          >
-            <Image
-              style={styles.commentProfileImage}
-              source={{ uri: item.photo }}
-            />
+      {storageComments.length === 0 ? (
+        <View style={styles.noComment}>
+          {/* <Text>1</Text> */}
+          <Text style={styles.noCommentText}>
+            Ще немає коментарів, напишіть перший 😊
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={storageComments}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }) => (
             <View
               style={{
-                width: "89%",
-                padding: 16,
-                backgroundColor: "#F7F7F7",
-                borderTopLeftRadius: index % 2 === 0 ? 0 : 6,
-                borderTopRightRadius: index % 2 === 0 ? 6 : 0,
-                borderBottomRightRadius: 6,
-                borderBottomLeftRadius: 6,
+                ...styles.commentContainer,
+                flexDirection: index % 2 === 0 ? "row" : "row-reverse",
               }}
             >
-              <Text style={styles.comment}>{item.comment}</Text>
-              <Text
+              <Image
+                style={styles.commentProfileImage}
+                source={{ uri: item.photo }}
+              />
+              <View
                 style={{
-                  ...styles.date,
-                  marginRight: index % 2 === 0 ? 0 : "auto",
+                  width: "89%",
+                  padding: 16,
+                  backgroundColor: "#F7F7F7",
+                  borderTopLeftRadius: index % 2 === 0 ? 0 : 6,
+                  borderTopRightRadius: index % 2 === 0 ? 6 : 0,
+                  borderBottomRightRadius: 6,
+                  borderBottomLeftRadius: 6,
                 }}
               >
-                {item.date}
-              </Text>
+                <Text style={styles.comment}>{item.comment}</Text>
+                <Text
+                  style={{
+                    ...styles.date,
+                    marginRight: index % 2 === 0 ? 0 : "auto",
+                  }}
+                >
+                  {item.date}
+                </Text>
+              </View>
             </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : ""}>
         <View
@@ -154,6 +164,18 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     backgroundColor: "#FFFFFF",
+  },
+  noComment: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noCommentText: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 24,
+    lineHeight: 32,
+    color: "#212121",
+    textAlign: "center",
   },
   mainPhoto: {
     height: 240,

@@ -10,9 +10,10 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { db } from "../../firebase/config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { uploadPhotoToStorage } from "../../firebase/utils/uploadPhototoStorage";
 import { Entypo, Feather } from "@expo/vector-icons";
@@ -69,6 +70,7 @@ export default function CreatePostsScreen({ route: { params }, navigation }) {
         location,
         title,
         address,
+        date: serverTimestamp(),
       });
     } catch (e) {
       console.error("Error adding document: ", e);

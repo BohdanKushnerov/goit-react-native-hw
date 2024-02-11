@@ -48,7 +48,7 @@ export default function Home() {
               }}
             >
               <Ionicons
-                name="ios-grid-outline"
+                name="grid-outline"
                 size={size}
                 color={focused ? "white" : "#212121CC"}
               />
@@ -69,8 +69,8 @@ export default function Home() {
             borderBottomWidth: 1,
             borderBottomColor: "#B3B3B3",
           },
-          headerLeftContainerStyle: { marginLeft: 20 },
-          headerRightContainerStyle: { marginRight: 20 },
+          headerLeftContainerStyle: { marginLeft: 24 },
+          headerRightContainerStyle: { marginRight: 24 },
           headerLeft: () => <GoBackBtn navigation={navigation} />,
           tabBarIcon: ({ focused, size }) => (
             <View
@@ -126,8 +126,8 @@ export default function Home() {
         options={({ navigation }) => ({
           tabBarButton: () => null,
           headerLeft: () => <GoBackBtn navigation={navigation} />,
-          headerLeftContainerStyle: { marginLeft: 20 },
-          headerRightContainerStyle: { marginRight: 20 },
+          headerLeftContainerStyle: { marginLeft: 24 },
+          headerRightContainerStyle: { marginRight: 24 },
         })}
       />
     </MainTab.Navigator>

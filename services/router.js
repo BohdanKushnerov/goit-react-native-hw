@@ -27,8 +27,8 @@ const useRoute = (isAuth) => {
           options={({ navigation }) => ({
             tabBarStyle: { display: "none" },
             headerLeft: () => <GoBackBtn navigation={navigation} />,
-            headerLeftContainerStyle: { marginLeft: 20 },
-            headerRightContainerStyle: { marginRight: 20 },
+            headerLeftContainerStyle: { marginLeft: 24 },
+            headerRightContainerStyle: { marginRight: 24 },
           })}
         />
       </AuthStack.Navigator>
